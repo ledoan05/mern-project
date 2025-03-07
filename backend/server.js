@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import connectDB from './config/db.js'
 import UserRouter from './router/user.js'
 import ProductRoute from './router/product.js'
+import CartRoute from './router/cart.js'
 
 
 
@@ -18,6 +19,7 @@ connectDB()
 
 app.use("/api/user", UserRouter)
 app.use("/api/product",  ProductRoute)
+app.use("/api/cart" , CartRoute)
 
 
 app.listen(port, () => {

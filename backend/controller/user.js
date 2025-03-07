@@ -34,11 +34,11 @@ export const Login = async (req, res) => {
   try {
     const user = await userModel.findOne({ email })
     if (!user) return res.status(400).json({
-      message: "Email da ton tai"
+      message: "Email khong ton tai"
     })
     const checkPass = await bcrypt.compare(password, user.password)
     if (!checkPass) return res.status(400).json({
-      message: "Mat khau khong dung"
+      message: "Mat khau khong dung111"     
     })
     const payLoad = { id: user._id, name: user.name, role: user.role  }
     const token = Jwt.sign(payLoad, process.env.JWT_SECRET, { expiresIn: "1h" })

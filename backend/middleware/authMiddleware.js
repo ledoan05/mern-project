@@ -9,7 +9,7 @@ export const authMiddle = async (req, res, next) => {
     token = token.split(" ")[1]
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     req.user = decoded
-    // console.log(" Thông tin user từ token:", req.user);
+    console.log(" Thông tin user từ token:", req.user);
     next()
   } catch (error) {
     console.log(error);
