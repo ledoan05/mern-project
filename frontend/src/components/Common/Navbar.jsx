@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Search from "./Search";
 import { List, ShoppingCart, User, X } from "lucide-react";
-import CartDrawer from "../Layout/CartDrawer";
+import CartDrawer from "./CartDrawer";
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
