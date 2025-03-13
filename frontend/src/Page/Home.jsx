@@ -1,10 +1,14 @@
 import React from 'react'
-import Banner from '../components/Layout/Banner'
+import Banner from '../components/Layout/Hero'
+import CollectionSection from '@/components/Products/CollectionSection'
+import NewArrival from '@/components/Products/NewArrival'
 
 const Home = () => {
   return (
-    <div className='mt-20'>
+    <div className='pt-24 -mt-1'>
       <Banner/>
+      <CollectionSection/>
+      <NewArrival/>
     </div>
   )
 }

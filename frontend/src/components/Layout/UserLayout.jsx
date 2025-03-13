@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 
 const UserLayout = () => {
   return (
-    <div className="bg-red-500">
+    <div>
       <Header />
       <main>
         <Outlet />
