@@ -4,6 +4,7 @@ import Home from "./Page/Home";
 import AdminLayout from "./components/Layout/AdminLayout";
 import UserLayout from "./components/Layout/UserLayout";
 import Login from "./Page/Login";
+import ProductsDetail from "./Page/products/ProductsDetail";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<UserLayout />}>
             <Route index element={<Home />} />
+             <Route path="dt" element={<ProductsDetail/>} />
             <Route path="login" element={<Login/>}/>
           </Route>
           <Route path="/admin" element={<AdminLayout />}></Route>

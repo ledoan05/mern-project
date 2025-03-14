@@ -1,9 +1,12 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const arrivals = [
   {
@@ -35,30 +38,40 @@ const arrivals = [
 export default function NewArrival() {
   return (
     <section className="py-12 bg-gray-50">
-      <div className="container mx-auto px-6 text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-6">New Arrivals</h2>
-        <Swiper>
-          {arrivals.map((item) => (
-            <SwiperSlide key={item.id}>
-              <Card className="overflow-hidden shadow-lg">
-                <CardContent className="p-0">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-60 object-cover"
-                  />
-                </CardContent>
-                <CardFooter className="flex justify-between items-center p-4">
-                  <div>
-                    <h3 className="text-lg font-semibold">{item.title}</h3>
-                    <p className="text-gray-600">{item.price}</p>
-                  </div>
-                  <Button>Add to Cart</Button>
-                </CardFooter>
-              </Card>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+      <div className="container mx-auto px-6 ">
+        <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">New Arrivals</h2>
+
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full max-w-7xl  mx-auto"
+        >
+          <CarouselContent>
+            {arrivals.map((item) => (
+              <CarouselItem key={item.id} className="md:basis-1/2 lg:basis-1/3">
+                <Card className="overflow-hidden rounded-lg shadow-lg">
+                  <CardContent className="p-0">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-56 object-cover rounded-t-lg"
+                    />
+                  </CardContent>
+                  <CardFooter className="flex justify-between items-center p-4 ">
+                    <div>
+                      <h3 className="text-lg font-semibold">{item.title}</h3>
+                      <p className="text-gray-600  ">{item.price}</p>
+                    </div>
+                  </CardFooter>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
       </div>
     </section>
   );
