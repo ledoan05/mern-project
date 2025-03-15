@@ -44,6 +44,7 @@ const ProductDetail = () => {
                 }`}
                 onClick={() => setMainImage(img)}
               />
+
             ))}
           </div>
           <div className="flex-1 ">
