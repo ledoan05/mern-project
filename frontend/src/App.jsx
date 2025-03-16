@@ -8,20 +8,22 @@ import ProductsDetail from "./Page/products/ProductsDetail";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import { Toaster } from "sonner";
+import Register from "./Page/Register";
 function App() {
   return (
     <Provider store={store}>
-      <Toaster richColors position="top-right" />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<UserLayout />}>
             <Route index element={<Home />} />
             <Route path="dt" element={<ProductsDetail />} />
             <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
           </Route>
           <Route path="/admin" element={<AdminLayout />}></Route>
         </Routes>
       </BrowserRouter>
+      <Toaster richColors position="top-right" />
     </Provider>
   );
 }

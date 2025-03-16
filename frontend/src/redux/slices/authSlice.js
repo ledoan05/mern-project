@@ -23,8 +23,6 @@ export const login = createAsyncThunk("auth/login", async (data, { rejectWithVal
     return rejectWithValue(error.response.data); 
   }
 })
-
-
 export const register = createAsyncThunk("auth/register", async (data, { rejectWidthValue }) => {
   try {
     const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/user/register`, data)
