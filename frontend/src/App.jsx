@@ -9,6 +9,7 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import { Toaster } from "sonner";
 import Register from "./Page/Register";
+import ColletionPage from "./Page/ColletionPage";
 function App() {
   return (
     <Provider store={store}>
@@ -16,6 +17,7 @@ function App() {
         <Routes>
           <Route path="/" element={<UserLayout />}>
             <Route index element={<Home />} />
+            <Route path="collection" element={<ColletionPage />} />
             <Route path="dt" element={<ProductsDetail />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />

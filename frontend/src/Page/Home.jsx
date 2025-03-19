@@ -1,7 +1,8 @@
 import React from 'react'
-import Banner from '../components/Layout/Hero'
+import Banner from '../components/Layout/Banner'
 import CollectionSection from '@/components/Products/CollectionSection'
 import NewArrival from '@/components/Products/NewArrival'
+import BestSeller from '@/components/Products/BestSeller'
 
 const Home = () => {
   return (
@@ -9,6 +10,7 @@ const Home = () => {
       <Banner/>
       <CollectionSection/>
       <NewArrival/>
+      <BestSeller/>
     </div>
   )
 }
