@@ -3,6 +3,7 @@ import { productModel } from "../models/product.js";
 
 export const addProduct = async (req, res) => {
   try {
+ 
     const {
       name,
       description,
@@ -17,7 +18,7 @@ export const addProduct = async (req, res) => {
       collections,
       material,
       gender,
-      image,
+      images,
       isFeatured,
       isPublished,
       tag,
@@ -45,7 +46,7 @@ export const addProduct = async (req, res) => {
       collections,
       material,
       gender,
-      image,
+      images,
       isFeatured,
       isPublished,
       tag,
@@ -178,16 +179,16 @@ export const listProduct = async (req, res) => {
 }
 export const saleProduct = async (req, res) => {
   try {
-    const saleProduct = await productModel.findOne().sort({ rating: -1 })
-    if (!saleProduct) {
-      return res.status(404).json({ message: "Không có sản phẩm được sale" });
+    const saleProducts = await productModel.find({ discountPrice: { $gt: 0 } });
+    if (!saleProducts.length) {
+      return res.status(404).json({ message: "Không có sản phẩm đang giảm giá" });
     }
-    res.status(200).json(saleProduct);
+    res.status(200).json(saleProducts);
   } catch (error) {
-    console.log(error);
-
+    console.error("Lỗi khi lấy sản phẩm sale:", error);
+    res.status(500).json({ message: "Lỗi server" });
   }
-}
+};
 export const newArrival = async (req, res) => {
   try {
     const newArrival = await productModel.find().sort({ createdAt: -1 }).limit(8)
@@ -220,18 +221,13 @@ export const similarProducts = async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
     }
-
-    // Tìm sản phẩm tương tự (cùng category & gender nhưng khác ID)
     const similarProducts = await productModel.find({
-      _id: { $ne: id }, // ID khác với sản phẩm đang xem
+      _id: { $ne: id },
       category: product.category,
       gender: product.gender,
-    }).limit(4);
+    }).limit(19);
 
-    res.status(200).json({
-      product,
-      similarProducts,
-    });
+    res.status(200).json(similarProducts);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Lỗi server" });

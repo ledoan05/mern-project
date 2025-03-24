@@ -1,20 +1,17 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { useSearchParams } from "react-router-dom";
 
-const categories = ["MEN", "Quần", "Giày", "Phụ kiện"];
-const colors = ["red", "Xanh", "Vàng", "Đen", "Trắng"];
-const sizes = ["S", "M", "L", "XL"];
+const categories = ["Top Wear", "Quần", "Giày", "Phụ kiện"];
+const colors = ["Red", "Blue", "Yellow"];
 const genders = ["Men", "Women"];
 
-const FilterSidebar = ({ onFilterChange }) => {
+const FilterSidebar = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState({
     category: "",
     color: [],
-    size: [],
     gender: "",
     minPrice: 0,
     maxPrice: 100,
@@ -44,14 +41,13 @@ const FilterSidebar = ({ onFilterChange }) => {
     if (!newFilters.category) delete updatedParams.category;
     if (!newFilters.gender) delete updatedParams.gender;
     if (!newFilters.color.length) delete updatedParams.color;
-    if (!newFilters.size.length) delete updatedParams.size;
     if (!newFilters.minPrice === 0 && newFilters.maxPrice === 100) {
       delete updatedParams.minPrice;
       delete updatedParams.maxPrice;
     }
 
     setSearchParams(updatedParams);
-    onFilterChange && onFilterChange(newFilters);
+  
   };
 
   const handleFilterChange = (e) => {
@@ -95,30 +91,13 @@ const FilterSidebar = ({ onFilterChange }) => {
         </div>
         <div className="mb-4">
           <label className="block font-medium mb-2">Màu sắc</label>
-          <div className="grid grid-cols-2 gap-2">
+          <div>
             {colors.map((color) => (
              <button key={color} name="color" value={color} onClick ={handleFilterChange} className="w-8 h-8 rounded-full boder border-gray-300 cursor-pointer transition hover:scale-105" style={{backgroundColor : color.toLocaleLowerCase()}}></button>
       
             ))}
           </div>
-        </div>
-
-        <div className="mb-4">
-          <label className="block font-medium mb-2">Kích thước</label>
-          <div className="grid grid-cols-4 gap-2">
-            {sizes.map((size) => (
-              <label key={size} className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="size"
-                  value={size}
-                  onChange={handleFilterChange}
-                />
-                <span className="ml-2">{size}</span>
-              </label>
-            ))}
-          </div>
-        </div>
+        </div>  
         <div className="mb-4">
           <label className="block font-medium mb-2">Giới tính</label>
           <select

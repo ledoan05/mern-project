@@ -788,7 +788,7 @@ const products = [
         altText: "Boho Floral Blouse",
       },
     ],
-    rating: 4.7,
+    rating: 5.0,
     numReviews: 20,
   },
   {
@@ -982,7 +982,8 @@ const products = [
     ],
     rating: 4.7,
     numReviews: 22,
-  },
+  },  
+  
 ];
 
 export default products

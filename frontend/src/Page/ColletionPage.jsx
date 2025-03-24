@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { productsByFilter } from "@/redux/slices/productsSlice";
 import { Card, CardContent } from "@/components/ui/card";
@@ -80,9 +80,11 @@ const CollectionPage = () => {
                     <p className="text-primary font-bold mt-2">
                       {product.price.toLocaleString()} đ
                     </p>
-                    <Button className="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white">
-                      Xem chi tiết
-                    </Button>
+                    <Link to={`/product/${product._id}`}>
+                      <Button className="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white">
+                        Xem chi tiết
+                      </Button>
+                    </Link>
                   </CardContent>
                 </Card>
               ))}

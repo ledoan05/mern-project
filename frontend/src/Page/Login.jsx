@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { login } from "@/redux/slices/authSlice";
 import { toast } from "sonner";
+import { mergeCart } from "@/redux/slices/cartSlice";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Email không hợp lệ" }),
@@ -34,32 +35,60 @@ const Login = () => {
     },
   });
 
-  const onSubmit = async (data) => {
-    setLoading(true);
-    try {
-      const res = await dispatch(login(data));
+  
 
-      if (login.fulfilled.match(res)) {
-        toast.success("Đăng nhập thành công!", {
-          description: `Chào mừng ${data.email}`,
-        });
+const onSubmit = async (data) => {
+  setLoading(true);
+  try {
+    let guestId = localStorage.getItem("guest");
+    console.log("🔥 Guest ID trước khi mergeCart:", guestId);
 
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      } else {
-        toast.error("Lỗi đăng nhập!", {
-          description: "Sai email hoặc mật khẩu.",
-        });
+    const res = await dispatch(login({ ...data, guestId }));
+    console.log("🔥 Kết quả login:", res);
+
+    if (res.payload) {
+      toast.success("Đăng nhập thành công!", {
+        description: `Chào mừng ${data.email}`,
+      });
+
+      if (guestId) {
+        console.log("🛒 Bắt đầu mergeCart...");
+
+        await dispatch(mergeCart({ guestId, userId: res.payload._id }));
+
+        console.log("🔥 Merge cart thành công!");
+
+        // ❌ XÓA `guestId` TRONG LOCAL STORAGE
+        localStorage.removeItem("guest");
+
+        // ✅ XÓA `guestId` TRONG CART
+        let cart = JSON.parse(localStorage.getItem("cart")) || {};
+        delete cart.guestId;
+        localStorage.setItem("cart", JSON.stringify(cart));
+
+        console.log("🔥 guestId đã bị xóa khỏi cart:", cart);
       }
-    } catch (error) {
-      console.log(error);
-      toast.error("Có lỗi xảy ra!", {
-        description: "Vui lòng thử lại sau.",
+
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+    } else {
+      toast.error("Lỗi đăng nhập!", {
+        description: "Sai email hoặc mật khẩu.",
       });
     }
-    setLoading(false);
-  };
+  } catch (error) {
+    console.log("❌ Lỗi trong đăng nhập:", error);
+    toast.error("Có lỗi xảy ra!", {
+      description: "Vui lòng thử lại sau.",
+    });
+  }
+  setLoading(false);
+};
+
+
+
+
 
   return (
     <Card className="max-w-md mx-auto mt-24 p-6 shadow-lg">

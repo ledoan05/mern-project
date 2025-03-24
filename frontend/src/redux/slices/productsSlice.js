@@ -35,7 +35,9 @@ export const productsByFilter = createAsyncThunk("products/productsByFilter", as
 
 export const productsDetail = createAsyncThunk("products/productsDetail", async (id) => {
   const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/product/${id}`)
+  
   return res.data
+  
 })
 
 export const updateProduct = createAsyncThunk("porducts/updateProduct", async ({ id, productData }) => {
@@ -49,10 +51,12 @@ export const updateProduct = createAsyncThunk("porducts/updateProduct", async ({
 
 export const similarProduct = createAsyncThunk("product/similarProduct", async ({ id }) => {
   const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/product/similar/${id}`)
+  console.log(res.data);
+  
   return res.data
 })
 
-const productSlice = createSlice({                     
+const productSlice = createSlice({
   name: "products",
   initialState: {
     products: [],
@@ -73,7 +77,9 @@ const productSlice = createSlice({
       material: "",
       collection: ""
     }
+
   },
+
   reducers: {
     setFilter: (state, action) => {
       state.filters = { ...state.filters, ...action.payload }
@@ -94,6 +100,7 @@ const productSlice = createSlice({
       }
     }
   },
+
   extraReducers: (builder) => {
     builder
       .addCase(productsByFilter.pending, (state) => {
@@ -115,12 +122,15 @@ const productSlice = createSlice({
       })
       .addCase(productsDetail.fulfilled, (state, action) => {
         state.loading = false
-        state.products = action.payload
+        state.selectedProduct = action.payload
+        
       })
       .addCase(productsDetail.rejected, (state, action) => {
         state.loading = false
         state.error = action.error.message
+    
       })
+    
 
       .addCase(updateProduct.pending, (state) => {
         state.loading = true
@@ -147,7 +157,7 @@ const productSlice = createSlice({
       })
       .addCase(similarProduct.fulfilled, (state, action) => {
         state.loading = false
-        state.products = action.payload
+        state.similarProducts = action.payload
       })
       .addCase(similarProduct.rejected, (state, action) => {
         state.loading = false
@@ -156,5 +166,5 @@ const productSlice = createSlice({
   }
 })
 
-export const {setFilter , clearFilter} = productSlice.actions
+export const { setFilter, clearFilter } = productSlice.actions
 export default productSlice.reducer
