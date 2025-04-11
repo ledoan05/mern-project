@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose";
 
 const checkoutItemSchema = mongoose.Schema({
@@ -10,14 +11,18 @@ const checkoutItemSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  image: {
-    type: String,
+  images: {
+    type: [String],
     required: true
   },
   price: {
     type: Number,
     required: true
   },
+  quantity : {
+    type  : Number,
+    required  : true
+  }
 }, {
   _id: false
 })
@@ -32,11 +37,10 @@ const checkoutSchema = mongoose.Schema({
   shipAddress: {
     address: { type: String, required: true },
     city: { type: String, required: true },
-    postalCode: { type: String, required: true },
-    country: { type: String, required: true },
   },
   paymentMethod: {
     type: String,
+    enum: ["ZaloPay", "COD"], 
     required: true
   },
   totalPrice: {
@@ -52,6 +56,7 @@ const checkoutSchema = mongoose.Schema({
   },
   paymentStatus: {
     type: String,
+    enum: ["pending", "success", "failed"],
     default: "pending"
   },
   paymentDetails: {
@@ -63,7 +68,7 @@ const checkoutSchema = mongoose.Schema({
   },
   finalzedAt: {
     type: Date
-  }
+  },
 },{
   timestamps : true
 })

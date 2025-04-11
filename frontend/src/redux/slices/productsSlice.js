@@ -35,7 +35,6 @@ export const productsByFilter = createAsyncThunk("products/productsByFilter", as
 
 export const productsDetail = createAsyncThunk("products/productsDetail", async (id) => {
   const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/product/${id}`)
-  
   return res.data
   
 })
@@ -81,7 +80,7 @@ const productSlice = createSlice({
   },
 
   reducers: {
-    setFilter: (state, action) => {
+      setFilter: (state, action) => {
       state.filters = { ...state.filters, ...action.payload }
     },
     clearFilter: (state) => {

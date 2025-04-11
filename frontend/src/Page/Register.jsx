@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { register } from "@/redux/slices/authSlice";
 import { toast } from "sonner";
+import { mergeCart } from "@/redux/slices/cartSlice";
 
 const registerSchema = z.object({
   name: z.string().trim().min(3, { message: "Tên phải có ít nhất 3 ký tự" }),
@@ -36,20 +37,56 @@ const Register = () => {
     },
   });
 
-  const onSubmit = async (data) => {
-    setLoading(true);
-    try {
-      const res = await dispatch(register(data));
-      register.fulfilled.match(res);
-      toast.success("Đăng ký thành công!");
-    } catch (error) {
-      console.log(error);
-      toast.error("Có lỗi xảy ra!", {
-        description: "Vui lòng thử lại sau.",
+const onSubmit = async (data) => {
+  setLoading(true);
+  try {
+    let guestId = localStorage.getItem("guest");
+    console.log("🔥 Guest ID trước khi mergeCart:", guestId);
+
+    // ✅ Gọi API đăng ký
+    const res = await dispatch(register({ ...data, guestId })).unwrap(); // Dùng unwrap() để lấy lỗi chính xác
+    console.log("🔥 Kết quả đăng ký:", res);
+
+    if (res) {
+      toast.success("Đăng ký thành công!", {
+        description: `Chào mừng ${data.email}`,
       });
+
+      // ✅ Xử lý merge giỏ hàng nếu có guestId
+      if (guestId) {
+        console.log("🛒 Bắt đầu mergeCart...");
+
+        await dispatch(mergeCart({ guestId, userId: res._id }));
+
+        console.log("🔥 Merge cart thành công!");
+
+        // ❌ XÓA `guestId` TRONG LOCAL STORAGE
+        localStorage.removeItem("guest");
+
+        // ✅ XÓA `guestId` TRONG CART
+        let cart = JSON.parse(localStorage.getItem("cart")) || {};
+        delete cart.guestId;
+        localStorage.setItem("cart", JSON.stringify(cart));
+
+        console.log("🔥 guestId đã bị xóa khỏi cart:", cart);
+      }
     }
-    setLoading(false);
-  };
+  } catch (error) {
+    console.log("❌ Lỗi trong đăng ký:", error);
+
+    // ✅ Kiểm tra lỗi từ Redux (email đã tồn tại, lỗi server,...)
+    let errorMessage = "Có lỗi xảy ra! Vui lòng thử lại sau.";
+    if (typeof error === "string") {
+      errorMessage = error; // Redux đã trả về message lỗi
+    }
+
+    toast.error("Lỗi đăng ký!", {
+      description: errorMessage,
+    });
+  }
+  setLoading(false);
+};
+
 
   return (
     <Card className="max-w-md mx-auto mt-24 p-6 shadow-lg">

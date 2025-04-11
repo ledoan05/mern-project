@@ -1,9 +1,11 @@
-import express from 'express'
-import { authMiddle } from '../middleware/authMiddleware.js'
-import { addCheckout } from '../controller/checkout.js'
+// import express from 'express'
+// import { authMiddle } from '../middleware/authMiddleware.js'
+// import { addCheckout,  finalCheckout, updateCheckout } from '../controller/checkout.js'
 
-const route = express.Router()
+// const route = express.Router()
 
-route.post('/' , authMiddle , addCheckout)
+// route.post('/', authMiddle, addCheckout)
+// // route.put(':id/pay', authMiddle, updateCheckout)
+// // route.post(':id/finalize', authMiddle, finalCheckout)
 
-export default route
+// export default route

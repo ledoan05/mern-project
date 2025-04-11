@@ -1,9 +1,15 @@
+import { productsByFilter, setFilter } from "@/redux/slices/productsSlice";
 import { SearchIcon, X } from "lucide-react";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Search = () => {
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
 
   const clickButtonSeach = () => {
     setIsOpen(true);
@@ -13,7 +19,9 @@ const Search = () => {
   };
   const handleSearch = (e)=>{
      e.preventDefault();
-     console.log(search);
+     dispatch(setFilter({search  : search}))
+     dispatch(productsByFilter({search  : search}))
+     navigate(`collection?search=${search}`)
      setIsOpen(false)
   }
   return (
