@@ -179,7 +179,7 @@ export const listProduct = async (req, res) => {
 }
 export const saleProduct = async (req, res) => {
   try {
-    const saleProducts = await productModel.find({ discountPrice: { $gt: 0 } });
+    const saleProducts = await productModel.find({ discountPrice: { $gt: 0 } }).limit(8);
     if (!saleProducts.length) {
       return res.status(404).json({ message: "Không có sản phẩm đang giảm giá" });
     }

@@ -17,10 +17,7 @@ const PaymentSuccess = () => {
 
   useEffect(() => {
     if (paymentMethod === "zalopay" && status === "1") {
-      // 🧹 Xoá giỏ hàng Redux
       dispatch(clearCart());
-
-      // 🧹 Nếu bạn dùng localStorage:
       localStorage.removeItem("cart");
 
       console.log("🧹 Đã xoá giỏ hàng sau khi thanh toán ZaloPay thành công.");

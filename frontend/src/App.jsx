@@ -12,6 +12,9 @@ import Register from "./Page/Register";
 import ColletionPage from "./Page/ColletionPage";
 import CheckoutPage from "./Page/CheckOutPage";
 import PaymentSuccess from "./Page/PaymentSuccess";
+import OrderPage from "./Page/OrderPage";
+import OrderDetailPage from "./Page/OrderDetail ";
+import OrderDetail from "./Page/OrderDetail ";
 function App() {
   return (
     <Provider store={store}>
@@ -25,6 +28,8 @@ function App() {
             <Route path="register" element={<Register />} />
             <Route path="checkout" element={<CheckoutPage />} />
             <Route path="payment-success" element={<PaymentSuccess />} />
+            <Route path="order" element={<OrderPage />} />
+            <Route path="order/:orderId" element={<OrderDetail />} />
           </Route>
           <Route path="/admin" element={<AdminLayout />}></Route>
         </Routes>

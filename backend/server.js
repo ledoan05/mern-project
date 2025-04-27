@@ -23,7 +23,6 @@ connectDB()
 app.use("/api/user", UserRouter)
 app.use("/api/product", ProductRoute)
 app.use("/api/cart", CartRoute)
-// app.use("/api/checkout", checkoutRoute)
 app.use("/api/order", orderRoute)
 app.listen(port, () => {
   console.log(`End point : http://localhost:${port}`);

@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { login } from "@/redux/slices/authSlice";
 import { toast } from "sonner";
 import { mergeCart } from "@/redux/slices/cartSlice";
+import { useNavigate } from "react-router-dom";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Email không hợp lệ" }),
@@ -24,9 +25,9 @@ const loginSchema = z.object({
 });
 
 const Login = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -34,64 +35,49 @@ const Login = () => {
       password: "",
     },
   });
+  const onSubmit = async (data) => {
+    setLoading(true);
+    try {
+      let guestId = localStorage.getItem("guest");
+      const res = await dispatch(login({ ...data, guestId })); 
+      
+      if (res.type === "auth/login/fulfilled")  {
+        toast.success("Đăng nhập thành công!", {
+          description: `Chào mừng ${res.payload.name}`,
+        });
+        navigate("/");
+        if (guestId) {
+          // console.log(" Bắt đầu mergeCart...");
 
-  
+          await dispatch(mergeCart({ guestId, userId: res.payload._id }));
 
-const onSubmit = async (data) => {
-  setLoading(true);
-  try {
-    let guestId = localStorage.getItem("guest");
-    console.log("🔥 Guest ID trước khi mergeCart:", guestId);
+          // console.log("Merge cart thành công!");
+          localStorage.removeItem("guest");
+          let cart = JSON.parse(localStorage.getItem("cart")) || {};
+          delete cart.guestId;
+          localStorage.setItem("cart", JSON.stringify(cart));
 
-    const res = await dispatch(login({ ...data, guestId }));
-    console.log("🔥 Kết quả login:", res);
+          // console.log(" guestId đã bị xóa khỏi cart:", cart);
+        }
 
-    if (res.payload) {
-      toast.success("Đăng nhập thành công!", {
-        description: `Chào mừng ${data.email}`,
-      });
-
-      if (guestId) {
-        console.log("🛒 Bắt đầu mergeCart...");
-
-        await dispatch(mergeCart({ guestId, userId: res.payload._id }));
-
-        console.log("🔥 Merge cart thành công!");
-
-        // ❌ XÓA `guestId` TRONG LOCAL STORAGE
-        localStorage.removeItem("guest");
-
-        // ✅ XÓA `guestId` TRONG CART
-        let cart = JSON.parse(localStorage.getItem("cart")) || {};
-        delete cart.guestId;
-        localStorage.setItem("cart", JSON.stringify(cart));
-
-        console.log("🔥 guestId đã bị xóa khỏi cart:", cart);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1000);
+      } else {
+        toast.error("Lỗi đăng nhập!", {
+          description: "Sai email hoặc mật khẩu.",
+        });
       }
-
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1000);
-    } else {
-      toast.error("Lỗi đăng nhập!", {
-        description: "Sai email hoặc mật khẩu.",
+    } catch (error) {
+      console.log("Lỗi trong đăng nhập:", error);
+      toast.error("Có lỗi xảy ra!", {
+        description: "Vui lòng thử lại sau.",
       });
     }
-  } catch (error) {
-    console.log("❌ Lỗi trong đăng nhập:", error);
-    toast.error("Có lỗi xảy ra!", {
-      description: "Vui lòng thử lại sau.",
-    });
-  }
-  setLoading(false);
-};
-
-
-
-
-
+    setLoading(false);
+  };
   return (
-    <Card className="max-w-md mx-auto mt-24 p-6 shadow-lg">
+    <Card className="max-w-md mx-auto mt-28 p-6 shadow-lg">
       <CardHeader>
         <CardTitle className="text-xl">Đăng nhập</CardTitle>
       </CardHeader>

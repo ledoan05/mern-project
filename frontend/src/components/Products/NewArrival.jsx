@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/carousel";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function NewArrival() {
   const [newArrivals, setNewArrivals] = useState([]); 
@@ -35,7 +36,7 @@ export default function NewArrival() {
     <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-6">
         <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
-          New Arrivals
+          Sản Phẩm Mới
         </h2>
 
         <Carousel
@@ -52,21 +53,23 @@ export default function NewArrival() {
                   key={item._id}
                   className="md:basis-1/2 lg:basis-1/3"
                 >
-                  <Card className="overflow-hidden rounded-lg shadow-lg">
-                    <CardContent className="p-0">
+                  <Link to={`/product/${item._id}`}>
+                    <CardContent className="p-4">
                       <img
                         src={item.images?.[0]?.url}
-                        
-                        className="w-full h-56 object-cover rounded-t-lg"
+                        alt={item.name}
+                        className="w-full h-48 object-cover rounded-md"
                       />
+                      <h2 className="text-lg font-semibold mt-3">
+                        {item.name}
+                      </h2>
+                      <p className="text-gray-500 text-sm">{item.category}</p>
+                      <p className="text-primary font-bold mt-2">
+                        ${item.price}
+                      </p>
+                      <Button className="mt-3 w-full">Xem chi tiết</Button>
                     </CardContent>
-                    <CardFooter className="flex justify-between items-center p-4">
-                      <div>
-                        <h3 className="text-lg font-semibold">{item.name}</h3>
-                        <p className="text-gray-600">${item.price}</p>
-                      </div>
-                    </CardFooter>
-                  </Card>
+                  </Link>
                 </CarouselItem>
               ))
             ) : (

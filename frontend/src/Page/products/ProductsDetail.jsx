@@ -55,7 +55,7 @@ const handleAddToCart = () => {
       quantity,
       userId,
       guestId,
-      images: selectedProduct.images, // Kiểm tra xem images có dữ liệu không
+      images: selectedProduct.images, 
     })
   );
 };
@@ -66,7 +66,7 @@ const handleAddToCart = () => {
   if (!selectedProduct) return <p>Product not found.</p>;
 
   return (
-    <div className="container mx-auto mt-96 px-4 md:px-8 lg:px-16 py-12">
+    <div className="container mx-auto mt-24  px-4 md:px-8 lg:px-16 py-12">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
         <div className="flex flex-col gap-4">
           <div className="w-full">
@@ -132,7 +132,7 @@ const handleAddToCart = () => {
               <QuantitySelector quantity={quantity} setQuantity={setQuantity} />
               <Button
                 onClick={handleAddToCart}
-                className="w-full md:w-auto px-6 bg-blue-500 text-white"
+                className="w-full md:w-auto px-6 text-white"
               >
                 Thêm vào giỏ hàng
               </Button>

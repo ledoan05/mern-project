@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const cartItemSchema = mongoose.Schema({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "product",
+    ref: "Product",
     required: true
   },
   name: String,
@@ -22,7 +22,7 @@ const cartItemSchema = mongoose.Schema({
 const cartSchema = mongoose.Schema({
   user : {
     type : mongoose.Schema.Types.ObjectId,
-    ref : "user",
+    ref : "User",
   },
   guestId : {
     type :String

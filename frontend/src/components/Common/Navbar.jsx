@@ -1,9 +1,20 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Search from "./Search";
 import { List, ShoppingCart, User, X } from "lucide-react";
 import CartDrawer from "./CartDrawer";
+import { HoverCard, HoverCardTrigger } from "@radix-ui/react-hover-card";
+import { Button } from "../ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { clearCart } from "@/redux/slices/cartSlice";
 import { logout } from "@/redux/slices/authSlice";
 
@@ -13,7 +24,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state.auth); // 🔥 Kiểm tra user đăng nhập
+  const { user } = useSelector((state) => state.auth); 
   const { cart } = useSelector((state) => state.cart);
   const cartItemCount =
     cart?.products?.reduce((total, product) => total + product.quantity, 0) ||
@@ -29,8 +40,8 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     await dispatch(logout());
-    dispatch(clearCart()); // 🔥 Xóa giỏ hàng khi logout
-    navigate("/login"); // Điều hướng về trang login
+    dispatch(clearCart()); 
+    navigate("/"); 
   };
 
   return (
@@ -41,54 +52,84 @@ const Navbar = () => {
             DLC
           </Link>
         </div>
-        <div className="hidden md:flex space-x-6">
-          <Link
-            className="text-gray-700 hover:text-black text-sm font-medium"
-            to={"#"}
-          >
-            MEN
+        <div className="hidden md:flex space-x-6 ml-48">
+          <Link className=" text-sm font-medium" to={"/collection"}>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Button variant="link">MEN</Button>
+              </HoverCardTrigger>
+            </HoverCard>
           </Link>
-          <Link
-            className="text-gray-700 hover:text-black text-sm font-medium"
-            to={"#"}
-          >
-            WOMEN
+          <Link className=" text-sm font-medium" to={"/collection"}>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Button variant="link">WOMEN</Button>
+              </HoverCardTrigger>
+            </HoverCard>
           </Link>
-          <Link
-            className="text-gray-700 hover:text-black text-sm font-medium"
-            to={"#"}
-          >
-            TOP WEAR
+          <Link className=" text-sm font-medium" to={"/collection"}>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Button variant="link">TOP WEAR</Button>
+              </HoverCardTrigger>
+            </HoverCard>
           </Link>
-          <Link
-            className="text-gray-700 hover:text-black text-sm font-medium"
-            to={"#"}
-          >
-            BOTTOM WEAR
+          <Link className=" text-sm font-medium" to={"/collection"}>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Button variant="link">BOTTOM WEAR</Button>
+              </HoverCardTrigger>
+            </HoverCard>
           </Link>
         </div>
-        <div className="flex space-x-4">
+        <div className="flex w-48 gap-5">
           {user ? (
-            <>
-              <span className="text-gray-700 text-sm font-medium">
-                Xin chào, {user.name}
-              </span>
-              <button
-                onClick={handleLogout}
-                className="text-red-600 text-sm font-medium"
-              >
-                Đăng xuất
-              </button>
-            </>
+            <div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <User />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuLabel>Tài khoản : {user.name}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    Lịch sử mua hàng
+                    <DropdownMenuShortcut>📦</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <button onClick={handleLogout}>Đăng xuất</button>
+                    <DropdownMenuShortcut>🚪</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           ) : (
-            <Link to="/login" className="text-blue-600 text-sm font-medium">
-              Đăng nhập
-            </Link>
+            <div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <User />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <Link to={"/login"}>
+                    <DropdownMenuItem>
+                      Đăng nhập
+                      <DropdownMenuShortcut>🔐</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link to={"/register"}>
+                    <DropdownMenuItem>
+                      Đăng Ký
+                      <DropdownMenuShortcut>📝</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                  </Link>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           )}
           <button onClick={toogleCartDrawer} className="h-6 relative">
             <ShoppingCart />
             {cartItemCount > 0 && (
-              <span className="absolute top-7 bg-red-700 text-white text-xs rounded-full px-2 py-0.5">
+              <span className="absolute bg-red-700 text-white text-xs rounded-full px-2 py-0.5">
                 {cartItemCount}
               </span>
             )}
@@ -115,16 +156,10 @@ const Navbar = () => {
         <div className="p-4">
           <h2 className="text-xl mb-4 font-bold">Menu</h2>
           <div className="space-y-3">
-            <Link
-              className="text-gray-700 hover:text-black text-sm font-medium block"
-              to={"#"}
-            >
+            <Link className=" text-sm font-medium block" to={"#"}>
               MEN
             </Link>
-            <Link
-              className="text-gray-700 hover:text-black text-sm font-medium block"
-              to={"#"}
-            >
+            <Link className=" text-sm font-medium block" to={"#"}>
               WOMEN
             </Link>
             <Link

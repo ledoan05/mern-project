@@ -2,6 +2,16 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { useSearchParams } from "react-router-dom";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "../ui/button";
 
 const categories = ["Top Wear", "Quần", "Giày", "Phụ kiện"];
 const colors = ["Red", "Blue", "Yellow"];
@@ -16,6 +26,19 @@ const FilterSidebar = () => {
     minPrice: 0,
     maxPrice: 100,
   });
+
+  const resetFilters = () => {
+    const defaultFilters = {
+      category: "",
+      color: [],
+      gender: "",
+      minPrice: 0,
+      maxPrice: 100,
+    };
+
+    setFilters(defaultFilters);
+    setSearchParams({}); // Xóa toàn bộ params trên URL
+  };
 
   useEffect(() => {
     const params = Object.fromEntries([...searchParams]);
@@ -41,79 +64,111 @@ const FilterSidebar = () => {
     if (!newFilters.category) delete updatedParams.category;
     if (!newFilters.gender) delete updatedParams.gender;
     if (!newFilters.color.length) delete updatedParams.color;
-    if (!newFilters.minPrice === 0 && newFilters.maxPrice === 100) {
+    if (newFilters.minPrice === 0 && newFilters.maxPrice === 100) {
       delete updatedParams.minPrice;
       delete updatedParams.maxPrice;
+    } else {
+      updatedParams.minPrice = newFilters.minPrice;
+      updatedParams.maxPrice = newFilters.maxPrice;
     }
 
     setSearchParams(updatedParams);
-  
   };
+  const handleColorClick = (e) => {
+    e.preventDefault();
+    const { name, value } = e.target;
+    let newColors = [...filters.color];
 
-  const handleFilterChange = (e) => {
-    const { name, value, checked, type } = e.target;
-    let newFilters = { ...filters };
-
-    if (type === "checkbox") {
-      newFilters[name] = checked
-        ? [...newFilters[name], value]
-        : newFilters[name].filter((item) => item !== value);
+    if (newColors.includes(value)) {
+      newColors = newColors.filter((c) => c !== value);
     } else {
-      newFilters[name] = value;
+      newColors.push(value);
     }
 
-    updateFilters(newFilters);
+    updateFilters({ ...filters, [name]: newColors });
   };
 
   const handleSliderChange = (value) => {
     updateFilters({ ...filters, minPrice: value[0], maxPrice: value[1] });
   };
 
+  const handleSelectChange = (name) => (value) => {
+    updateFilters({ ...filters, [name]: value });
+  };
+
   return (
-    <Card className="p-4 w-72">
+    <Card className="p-4 w-72 mt-6">
       <CardContent>
         <h2 className="text-xl font-semibold mb-4">Bộ lọc sản phẩm</h2>
+
+        {/* Danh mục */}
         <div className="mb-4">
           <label className="block font-medium mb-2">Danh mục</label>
-          <select
-            className="w-full p-2 border rounded-md"
-            name="category"
+          <Select
             value={filters.category}
-            onChange={handleFilterChange}
+            onValueChange={handleSelectChange("category")}
           >
-            <option value="">Tất cả</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Chọn danh mục" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Danh mục</SelectLabel>
+                {categories.map((category) => (
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
+
+        {/* Màu sắc */}
         <div className="mb-4">
           <label className="block font-medium mb-2">Màu sắc</label>
-          <div>
+          <div className="flex gap-2">
             {colors.map((color) => (
-             <button key={color} name="color" value={color} onClick ={handleFilterChange} className="w-8 h-8 rounded-full boder border-gray-300 cursor-pointer transition hover:scale-105" style={{backgroundColor : color.toLocaleLowerCase()}}></button>
-      
+              <button
+                key={color}
+                name="color"
+                value={color}
+                onClick={handleColorClick}
+                className={`w-6 h-6 rounded-full border-2 ${
+                  filters.color.includes(color)
+                    ? "ring-2 ring-black"
+                    : "border-gray-300"
+                } transition hover:scale-105`}
+                style={{ backgroundColor: color.toLowerCase() }}
+              ></button>
             ))}
           </div>
-        </div>  
+        </div>
+
+        {/* Giới tính */}
         <div className="mb-4">
           <label className="block font-medium mb-2">Giới tính</label>
-          <select
-            className="w-full p-2 border rounded-md"
-            name="gender"
+          <Select
             value={filters.gender}
-            onChange={handleFilterChange}
+            onValueChange={handleSelectChange("gender")}
           >
-            <option value="">Tất cả</option>
-            {genders.map((gender) => (
-              <option key={gender} value={gender}>
-                {gender}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Chọn giới tính" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Giới tính</SelectLabel>
+                {genders.map((gender) => (
+                  <SelectItem key={gender} value={gender}>
+                    {gender}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
+
+        {/* Khoảng giá */}
         <div className="mb-4">
           <label className="block font-medium mb-2">Khoảng giá</label>
           <Slider
@@ -127,6 +182,13 @@ const FilterSidebar = () => {
             <span>{filters.maxPrice.toLocaleString()}đ</span>
           </div>
         </div>
+
+        <Button
+          onClick={resetFilters}
+          className="w-full mt-4 text-white font-semibold py-2 px-4 rounded"
+        >
+          Xóa bộ lọc
+        </Button>
       </CardContent>
     </Card>
   );

@@ -4,6 +4,7 @@ import axios from "axios";
 import moment from "moment";
 import CryptoJS from "crypto-js";
 
+
 const config = {
   app_id: "2553",
   key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
@@ -178,7 +179,26 @@ export const callbackRouter = async (req, res) => {
   res.json(result);
 };
 
+export const getOrder = async (req, res) => {
+  try {
+    const order = await orderModel.find({ user: req.user.id }).sort({
+      createdAt: -1
+    })
+    res.json(order)
+  } catch (error) {
+    console.log(error);
+  }
+}
 
+export const getOrderById = async (req, res) => {
+  try {
+    const order = await orderModel.findById(req.params.id).populate("user", "name email")
+    if (!order) {
+      return res.status(401).json({ message: "Khong ton tai " })
+    }
+    res.status(200).json(order);
+  } catch (error) {
+    console.log(error);
+  }
+}
 
-
-export default paymentZaloRouter;
