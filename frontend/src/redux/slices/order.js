@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios from "../../untils/axiosInstance.js";
 
 // Lấy tất cả đơn hàng của người dùng
 export const fetchOrderUser = createAsyncThunk("order/fetchOrderUser", async (_, { rejectWithValue }) => {

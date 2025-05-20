@@ -3,15 +3,12 @@ import { cartModel } from "../models/cart.js";
 import axios from "axios";
 import moment from "moment";
 import CryptoJS from "crypto-js";
-
-
 const config = {
   app_id: "2553",
   key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
   key2: "kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz",
   endpoint: "https://sb-openapi.zalopay.vn/v2/create",
 };
-
 // Thanh toán COD 
 export const createOrder = async (req, res) => {
   const { orderItems, shipAddress, paymentMethod, totalPrice } = req.body;
@@ -43,7 +40,6 @@ export const createOrder = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 // Thanh toán ZaloPay
 export const paymentZaloRouter = async (req, res) => {
   console.log("Dữ liệu nhận từ frontend:", req.body);
@@ -102,7 +98,6 @@ export const paymentZaloRouter = async (req, res) => {
     return res.status(500).json({ message: "Có lỗi xảy ra khi yêu cầu thanh toán ZaloPay.", error: error.message });
   }
 };
-
 // Xử lý callback từ ZaloPay sau khi thanh toán
 export const callbackRouter = async (req, res) => {
   console.log("📥 Full callback body:", req.body);
@@ -189,7 +184,6 @@ export const getOrder = async (req, res) => {
     console.log(error);
   }
 }
-
 export const getOrderById = async (req, res) => {
   try {
     const order = await orderModel.findById(req.params.id).populate("user", "name email")

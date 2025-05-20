@@ -92,10 +92,12 @@ const Navbar = () => {
                 <DropdownMenuContent className="w-56">
                   <DropdownMenuLabel>Tài khoản : {user.name}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    Lịch sử mua hàng
-                    <DropdownMenuShortcut>📦</DropdownMenuShortcut>
-                  </DropdownMenuItem>
+                  <Link to={"/order"}>
+                    <DropdownMenuItem>
+                      Lịch sử mua hàng
+                      <DropdownMenuShortcut>📦</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                  </Link>
                   <DropdownMenuItem>
                     <button onClick={handleLogout}>Đăng xuất</button>
                     <DropdownMenuShortcut>🚪</DropdownMenuShortcut>

@@ -1,0 +1,28 @@
+import { Route } from "react-router-dom";
+import Home from "../pages/Home";
+import ColletionPage from "../pages/ColletionPage";
+import ProductsDetail from "../pages/ProductsDetail";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
+import CheckoutPage from "../pages/CheckOutPage";
+import PaymentSuccess from "../pages/PaymentSuccess";
+import OrderPage from "../pages/OrderPage";
+import OrderDetail from "../pages/OrderDetail";
+
+const UserRoutes = () => {
+  return (
+    <>
+      <Route index element={<Home />} />
+      <Route path="collection" element={<ColletionPage />} />
+      <Route path="product/:id" element={<ProductsDetail />} />
+      <Route path="login" element={<Login />} />
+      <Route path="register" element={<Register />} />
+      <Route path="checkout" element={<CheckoutPage />} />
+      <Route path="payment-success" element={<PaymentSuccess />} />
+      <Route path="order" element={<OrderPage />} />
+      <Route path="order/:orderId" element={<OrderDetail />} />
+    </>
+  );
+};
+
+export default UserRoutes;

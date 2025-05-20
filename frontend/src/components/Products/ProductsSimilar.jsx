@@ -8,7 +8,7 @@ const ProductsSimilar = ({products , loading }) => {
     <>
       <div className="lg:col-span-4">
         <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
-          Bộ Sưu Tập
+          Sản phẩm cùng loại
         </h1>
         {loading ? (
           <p className="text-center text-gray-500">Đang tải sản phẩm...</p>

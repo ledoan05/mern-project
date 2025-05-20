@@ -1,44 +1,38 @@
   import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-  import axios from "axios";
-  import { fetchCart, mergeCart } from "./cartSlice.js"
+  import axios from "../../untils/axiosInstance.js";    
+  import { fetchCart, mergeCart } from "./cartSlice.js";
 
-  // Lấy user và guestId từ localStorage
   const userFromStorage = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
   const savedGuest = localStorage.getItem("guest");
-
-  const initialGuest = userFromStorage ? null : savedGuest || `guest_${new Date().getTime()}`;
+  const initialGuest = userFromStorage ?  null : savedGuest || `guest_${new Date().getTime()}`;
 
   if (!savedGuest && !userFromStorage) {
     localStorage.setItem("guest", initialGuest);
   }
 
-
   const initialState = {
-    user: userFromStorage,
+    user: userFromStorage,  
     guest: initialGuest,
     token: localStorage.getItem("token") || null,
     loading: false,
     error: null,
   };
 
-  // ✅ **Đăng nhập**
   export const login = createAsyncThunk("auth/login", async (data, { dispatch, rejectWithValue }) => {
     try {
       const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/user/login`, data);
-      
       localStorage.setItem("user", JSON.stringify(res.data.data));
+      localStorage.setItem("refreshToken", res.data.refreshToken);
       localStorage.setItem("token", res.data.token);
 
       const userId = res.data.data._id;
       const guestId = localStorage.getItem("guestId");
 
-      // ✅ Hợp nhất giỏ hàng nếu có guestId
       if (guestId) {
         await dispatch(mergeCart({ guestId, userId }));
-        localStorage.removeItem("guestId"); // Xóa guestId sau khi hợp nhất
+        localStorage.removeItem("guestId");
       }
 
-      // ✅ Sau khi đăng nhập, tải giỏ hàng ngay
       dispatch(fetchCart({ userId }));
 
       return res.data.data;
@@ -47,54 +41,44 @@
     }
   });
 
+  export const register = createAsyncThunk("auth/register", async (data, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/user/register`, data);
+      localStorage.setItem("user", JSON.stringify(res.data.data));
+      localStorage.setItem("refreshToken", res.data.refreshToken);
+      localStorage.setItem("token", res.data.token);
 
-  // ✅ **Đăng ký**
-export const register = createAsyncThunk("auth/register", async (data, { dispatch, rejectWithValue }) => {
-  try {
-    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/user/register`, data);
-    console.log("rêrerererer : " ,  res );
-    
+      const userId = res.data.data._id;
+      const guestId = localStorage.getItem("guestId");
 
-    localStorage.setItem("user", JSON.stringify(res.data.data));
-    localStorage.setItem("token", res.data.token);
+      if (guestId) {
+        await dispatch(mergeCart({ guestId, userId }));
+        localStorage.removeItem("guestId");
+      }
 
-    const userId = res.data.data._id;
-    const guestId = localStorage.getItem("guestId");
+      dispatch(fetchCart({ userId }));
 
-    // ✅ Hợp nhất giỏ hàng nếu có guestId
-    if (guestId) {
-      await dispatch(mergeCart({ guestId, userId }));
-      localStorage.removeItem("guestId"); // Xóa guestId sau khi hợp nhất
+      return res.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Lỗi đăng ký");
     }
-
-    // ✅ Sau khi đăng nhập, tải giỏ hàng ngay
-    dispatch(fetchCart({ userId }));
-
-    return res.data.data;
-  } catch (error) {
-    return rejectWithValue(error.response?.data || "Lỗi đăng nhập");
-  }
-});
-
-
-
+  });
 
   const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-      // ✅ **Đăng xuất**
       logout: (state) => {
         state.user = null;
-        state.token = null;
+        state.token = null; 
         state.guest = `guest_${new Date().getTime()}`;
 
         localStorage.removeItem("user");
+        localStorage.removeItem("cart")
         localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
         localStorage.setItem("guest", state.guest);
       },
-
-      // ✅ **Tạo Guest ID mới**
       generateNewGuest: (state) => {
         state.guest = `guest_${new Date().getTime()}`;
         localStorage.setItem("guest", state.guest);
@@ -116,7 +100,6 @@ export const register = createAsyncThunk("auth/register", async (data, { dispatc
           state.loading = false;
           state.error = action.payload;
         })
-
         .addCase(register.pending, (state) => {
           state.loading = true;
           state.error = null;
@@ -134,5 +117,5 @@ export const register = createAsyncThunk("auth/register", async (data, { dispatc
     },
   });
 
-  export const { logout, generateNewGuest } = authSlice.actions;
+export const { logout, generateNewGuest } = authSlice.actions;
   export default authSlice.reducer;

@@ -1,20 +1,19 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "./App.css";
-import Home from "./Page/Home";
+import "../src/styles/app.css";
+import Home from "./pages/Home";
 import AdminLayout from "./components/Layout/AdminLayout";
 import UserLayout from "./components/Layout/UserLayout";
-import Login from "./Page/Login";
-import ProductsDetail from "./Page/products/ProductsDetail";
+import Login from "./pages/Login";
+import ProductsDetail from "./pages/ProductsDetail";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import { Toaster } from "sonner";
-import Register from "./Page/Register";
-import ColletionPage from "./Page/ColletionPage";
-import CheckoutPage from "./Page/CheckOutPage";
-import PaymentSuccess from "./Page/PaymentSuccess";
-import OrderPage from "./Page/OrderPage";
-import OrderDetailPage from "./Page/OrderDetail ";
-import OrderDetail from "./Page/OrderDetail ";
+import Register from "./pages/Register";
+import ColletionPage from "./pages/ColletionPage";
+import CheckoutPage from "./pages/CheckOutPage";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import OrderPage from "./pages/OrderPage";
+import OrderDetail from "./pages/OrderDetail ";
 function App() {
   return (
     <Provider store={store}>
