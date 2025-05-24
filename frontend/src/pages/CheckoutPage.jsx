@@ -56,12 +56,9 @@ const CheckoutPage = () => {
     };
 
     const token = localStorage.getItem("token");
-
     try {
       if (paymentMethod === "COD") {
-        const res = await axios.post(
-          "http://localhost:3000/api/order/create",
-          orderData,
+        const res = await axios.post("/api/order/create", orderData,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -72,9 +69,7 @@ const CheckoutPage = () => {
           navigate("/payment-success");
         }
       } else if (paymentMethod === "ZALOPAY") {
-        const zaloRes = await axios.post(
-          "http://localhost:3000/api/order/create-order",
-          orderData,
+        const zaloRes = await axios.post("/api/order/create-order",orderData,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -138,10 +133,9 @@ const CheckoutPage = () => {
         </Card>
 
         <Button type="submit" className="w-full">
-          Xác nhận thanh toán
+          Xác nhận thanh toán 
         </Button>
       </form>
-
       {/* Giỏ hàng */}
       <div className="md:w-2/4 space-y-6">
         <h2 className="text-2xl font-bold">Giỏ hàng của bạn</h2>

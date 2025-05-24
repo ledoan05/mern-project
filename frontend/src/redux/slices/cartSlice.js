@@ -7,7 +7,7 @@ const saveCartToStrorage = (cart) => {
 
 export const fetchCart = createAsyncThunk("cart/fetchCart", async ({ userId, guestId }, { rejectWithValue }) => {
   try {
-    const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/cart`, {
+    const res = await axios.get(`/api/cart`, {
       params: { userId, guestId }
     })
     return res.data
@@ -23,7 +23,7 @@ export const addToCart = createAsyncThunk(
     try {
       let guestId = localStorage.getItem("guest");
       console.log("📌 Dữ liệu trước khi gửi API:", { productId, quantity, size, color, userId, guestId, images }); 
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/cart`, { productId, quantity, size, color, userId, guestId, images });
+      const res = await axios.post(`/api/cart`, { productId, quantity, size, color, userId, guestId, images });
      console.log("sdsdsdsd" ,  res);
       return res.data;
     } catch (error) {
@@ -37,7 +37,7 @@ export const updateCartItemQuantity = createAsyncThunk(
   "cart/updateCartItemQuantity",
   async ({ productId, quantity, size, color, userId, guestId }, { rejectWithValue }) => {
     try {
-      const res = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/cart`, {
+      const res = await axios.put(`/api/cart`, {
         productId, quantity, size, color, userId, guestId
       });
       return res.data;
@@ -53,7 +53,7 @@ export const removeItemCart = createAsyncThunk(
   "cart/removeItemCart",
   async ({ productId, size, color, userId, guestId }, { rejectWithValue }) => {
     try {
-      const res = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/cart`, {
+      const res = await axios.delete(`/api/cart`, {
         data: { productId, size, color, userId, guestId },
       });
       return res.data;
@@ -66,7 +66,7 @@ export const removeItemCart = createAsyncThunk(
 export const mergeCart = createAsyncThunk("cart/mergeCart", async ({ guestId, userId }, { rejectWithValue, getState }) => {
   try {
     const token = getState().auth?.token;
-    const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/cart/merge`,
+    const response = await axios.post(`/api/cart/merge`,
       { guestId, userId },
       {
         headers: { Authorization: `Bearer ${token}` },

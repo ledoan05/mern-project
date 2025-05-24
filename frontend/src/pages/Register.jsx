@@ -50,7 +50,7 @@ const onSubmit = async (data) => {
       toast.success("Đăng ký thành công!", {
         description: `Chào mừng ${data.email}`,
       });
-      navigate("/login")
+      navigate("/")
 
       // ✅ Xử lý merge giỏ hàng nếu có guestId
       if (guestId) {

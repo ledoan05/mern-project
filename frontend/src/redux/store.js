@@ -10,7 +10,6 @@ const store = configureStore({
     product: productReducer,
     cart: cartReducer,
     order : orderReducer
-  
   },
   devTools: import.meta.env.MODE !== "production",
 })

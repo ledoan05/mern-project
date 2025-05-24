@@ -5,7 +5,7 @@ const SizeSelector = ({ sizes, selectedSize, setSelectedSize }) => {
     <div className="flex gap-2 mt-2">
       {sizes.map((size) => (
         <button
-          key={size} // ✅ Key duy nhất
+          key={size}
           className={`px-4 py-2 border rounded ${
             selectedSize === size ? "bg-black text-white" : "bg-gray-200"
           }`}

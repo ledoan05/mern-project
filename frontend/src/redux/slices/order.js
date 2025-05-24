@@ -4,7 +4,7 @@ import axios from "../../untils/axiosInstance.js";
 // Lấy tất cả đơn hàng của người dùng
 export const fetchOrderUser = createAsyncThunk("order/fetchOrderUser", async (_, { rejectWithValue }) => {
   try {
-    const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/order/my-order`, {
+    const res = await axios.get(`/api/order/my-order`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
@@ -21,7 +21,7 @@ export const fetchOrderDetail = createAsyncThunk(
     console.log("👉 Đã vào fetchOrderDetail với orderId:", orderId);
 
     try {
-      const url = `${import.meta.env.VITE_BACKEND_URL}/api/order/my-order/${orderId}`;
+      const url = `/api/order/my-order/${orderId}`;
       const token = localStorage.getItem("token");
 
       console.log("👉 URL:", url);

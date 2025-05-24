@@ -1,4 +1,4 @@
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import {  CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -8,7 +8,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../untils/axiosInstance.js";
 import { Link } from "react-router-dom";
 
 export default function NewArrival() {
@@ -17,9 +17,7 @@ export default function NewArrival() {
   useEffect(() => {
     const fetchNewArrivals = async () => {
       try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/product/new-arrivals`
-        );
+        const res = await axios.get(`/api/product/new-arrivals`);
 
         // console.log(res);
 

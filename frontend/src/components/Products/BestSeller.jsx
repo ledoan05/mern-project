@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../untils/axiosInstance.js";
 import { Link } from "react-router-dom";
 
 const BestSeller = () => {
@@ -10,9 +10,7 @@ const BestSeller = () => {
   useEffect(() => {
     const fetchBestSeller = async () => {
       try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/product/sale`
-        );
+        const res = await axios.get(`/api/product/sale`);
         setBestSeller(res.data);
       } catch (error) {
         console.error("Lỗi khi lấy sản phẩm bán chạy:", error);
