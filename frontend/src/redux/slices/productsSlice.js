@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios from "../../untils/axiosInstance.js";
 
 export const productsByFilter = createAsyncThunk("products/productsByFilter", async ({
   collection,
@@ -29,18 +29,18 @@ export const productsByFilter = createAsyncThunk("products/productsByFilter", as
   if (brand) query.append("brand", brand)
   if (limit) query.append("limit", limit)
 
-  const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/product?${query.toString()}`)
+  const res = await axios.get(`/api/product?${query.toString()}`)
   return res.data
 })
 
 export const productsDetail = createAsyncThunk("products/productsDetail", async (id) => {
-  const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/product/${id}`)
+  const res = await axios.get(`/api/product/${id}`)
   return res.data
   
 })
 
 export const updateProduct = createAsyncThunk("porducts/updateProduct", async ({ id, productData }) => {
-  const res = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/product/${id}`, productData, {
+  const res = await axios.put(`/api/product/${id}`, productData, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("userToken")}`
     }
@@ -49,7 +49,7 @@ export const updateProduct = createAsyncThunk("porducts/updateProduct", async ({
 })
 
 export const similarProduct = createAsyncThunk("product/similarProduct", async ({ id }) => {
-  const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/product/similar/${id}`)
+  const res = await axios.get(`/api/product/similar/${id}`)
   console.log(res.data);
   
   return res.data
@@ -166,4 +166,4 @@ const productSlice = createSlice({
 })
 
 export const { setFilter, clearFilter } = productSlice.actions
-export default productSlice.reducer
+export default productSlice.reducer 

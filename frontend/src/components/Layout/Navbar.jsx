@@ -92,12 +92,24 @@ const Navbar = () => {
                 <DropdownMenuContent className="w-56">
                   <DropdownMenuLabel>Tài khoản : {user.name}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <Link to={"/order"}>
+
+                  {/* 👉 Chỉ hiện nếu user là admin */}
+                  {user.role === "admin" && (
+                    <Link to="/admin/dashboard">
+                      <DropdownMenuItem>
+                        Trang quản trị
+                        <DropdownMenuShortcut>🛠️</DropdownMenuShortcut>
+                      </DropdownMenuItem>
+                    </Link>
+                  )}
+
+                  <Link to="/order">
                     <DropdownMenuItem>
                       Lịch sử mua hàng
                       <DropdownMenuShortcut>📦</DropdownMenuShortcut>
                     </DropdownMenuItem>
                   </Link>
+
                   <DropdownMenuItem>
                     <button onClick={handleLogout}>Đăng xuất</button>
                     <DropdownMenuShortcut>🚪</DropdownMenuShortcut>

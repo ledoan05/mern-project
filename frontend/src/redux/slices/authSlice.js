@@ -20,7 +20,7 @@
 
   export const login = createAsyncThunk("auth/login", async (data, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/user/login`, data);
+      const res = await axios.post(`/api/user/login`, data);
       localStorage.setItem("user", JSON.stringify(res.data.data));
       localStorage.setItem("refreshToken", res.data.refreshToken);
       localStorage.setItem("token", res.data.token);
@@ -43,7 +43,7 @@
 
   export const register = createAsyncThunk("auth/register", async (data, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/user/register`, data);
+      const res = await axios.post(`/api/user/register`, data);
       localStorage.setItem("user", JSON.stringify(res.data.data));
       localStorage.setItem("refreshToken", res.data.refreshToken);
       localStorage.setItem("token", res.data.token);
