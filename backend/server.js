@@ -5,7 +5,6 @@ import connectDB from './config/db.js'
 import UserRouter from './router/user.js'
 import ProductRoute from './router/product.js'
 import CartRoute from './router/cart.js'
-// import checkoutRoute from './router/checkout.js'
 import orderRoute from './router/order.js'
 
 
@@ -15,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors())
 dotenv.config()
-
+    
 const port = process.env.PORT || 9000
 
 connectDB()

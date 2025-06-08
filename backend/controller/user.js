@@ -2,6 +2,7 @@ import { userModel } from "../models/user.js";
 import bcrypt from 'bcryptjs';
 import Jwt from 'jsonwebtoken';
 
+//Đăng ký tài khoản
 export const Register = async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
@@ -33,7 +34,7 @@ export const Register = async (req, res) => {
     return res.status(500).json({ message: "Đã xảy ra lỗi, vui lòng thử lại sau!" });
   }
 };
-
+//Đăng nhập tài khoản
 export const Login = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -44,7 +45,7 @@ export const Login = async (req, res) => {
     if (!checkPass) return res.status(400).json({ message: "Mật khẩu không đúng" });
 
     const payLoad = { id: user._id, name: user.name, role: user.role };
-    const token = Jwt.sign(payLoad, process.env.JWT_SECRET, { expiresIn: "1h" }); // dùng 5s để test
+    const token = Jwt.sign(payLoad, process.env.JWT_SECRET, { expiresIn: "1h" }); 
     const refreshToken = Jwt.sign(payLoad, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
 
     user.password = undefined;
@@ -56,11 +57,11 @@ export const Login = async (req, res) => {
       refreshToken,
     });
   } catch (error) {
-    console.log("Lỗi đăng nhập:", error);
+    // console.log("Lỗi đăng nhập:", error);
     return res.status(500).json({ message: "Đăng nhập thất bại" });
   }
 };
-
+//Tạo refresh token
 export const refreshToken = async (req, res) => {
   const { refreshToken } = req.body;
   if (!refreshToken) {
@@ -76,7 +77,7 @@ export const refreshToken = async (req, res) => {
     );
     res.json({ token: newToken });
   } catch (error) {
-    console.error("Lỗi refresh token:", error.message);
+    // console.error("Lỗi refresh token:", error.message);
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ message: 'Refresh token đã hết hạn' });
     }

@@ -42,7 +42,7 @@ export const createOrder = async (req, res) => {
 };
 // Thanh toán ZaloPay
 export const paymentZaloRouter = async (req, res) => {
-  console.log("Dữ liệu nhận từ frontend:", req.body);
+  // console.log("Dữ liệu nhận từ frontend:", req.body);
   const { amount, paymentMethod, bank_code, orderItems, shipAddress } = req.body;
 
   if (!amount || isNaN(amount) || amount <= 0) {
@@ -94,13 +94,13 @@ export const paymentZaloRouter = async (req, res) => {
       return res.status(400).json({ message: "Không nhận được URL thanh toán từ ZaloPay.", error: zaloRes.data });
     }
   } catch (error) {
-    console.error("Lỗi khi gửi yêu cầu thanh toán ZaloPay:", error);
+    // console.error("Lỗi khi gửi yêu cầu thanh toán ZaloPay:", error);
     return res.status(500).json({ message: "Có lỗi xảy ra khi yêu cầu thanh toán ZaloPay.", error: error.message });
   }
 };
 // Xử lý callback từ ZaloPay sau khi thanh toán
 export const callbackRouter = async (req, res) => {
-  console.log("📥 Full callback body:", req.body);
+  // console.log(" Full callback body:", req.body);
 
   let result = {};
 
@@ -110,7 +110,7 @@ export const callbackRouter = async (req, res) => {
     // Validate MAC
     const mac = CryptoJS.HmacSHA256(data, config.key2).toString();
     if (reqMac !== mac) {
-      console.warn("⚠️ MAC không hợp lệ!");
+      // console.warn(" MAC không hợp lệ!")
       result.return_code = -1;
       result.return_message = "MAC không hợp lệ";
       return res.json(result);
@@ -122,7 +122,7 @@ export const callbackRouter = async (req, res) => {
     // Xử lý trường hợp thiếu return_code
     let returnCode = dataJson.return_code;
     if (returnCode === undefined) {
-      console.warn("⚠️ Không có return_code trong callback. Gọi API kiểm tra trạng thái...");
+      // console.warn("Không có return_code trong callback. Gọi API kiểm tra trạng thái...");
 
       // Gọi API kiểm tra trạng thái đơn hàng
       const queryMac = CryptoJS.HmacSHA256(`${config.app_id}|${dataJson.app_trans_id}|${config.key1}`, config.key1).toString();
@@ -135,7 +135,7 @@ export const callbackRouter = async (req, res) => {
       });
 
       returnCode = queryRes.data.return_code;
-      console.log("🔁 return_code từ query API:", returnCode);
+      // console.log("return_code từ query API:", returnCode);
     }
 
     const parsedReturnCode = parseInt(returnCode);
@@ -155,25 +155,25 @@ export const callbackRouter = async (req, res) => {
     const order = new orderModel(orderData);
     await order.save();
 
-    console.log("✅ Đơn hàng đã lưu:", orderData);
+    // console.log(" Đơn hàng đã lưu:", orderData);
 
 
     if (parsedReturnCode === 1) {
       await cartModel.deleteOne({ user: embedData.userId });
-      console.log("🛒 Giỏ hàng đã được xóa sau khi thanh toán thành công.");
+      // console.log("Giỏ hàng đã được xóa sau khi thanh toán thành công.");
     }
 
     result.return_code = 1;
     result.return_message = "Thanh toán và lưu đơn hàng thành công";
   } catch (error) {
-    console.error("❌ Lỗi xử lý callback:", error);
+    // console.error("Lỗi xử lý callback:", error);
     result.return_code = 0;
     result.return_message = error.message;
   }
 
   res.json(result);
 };
-
+// Lấy danh sách đơn hàng của người dùng
 export const getOrder = async (req, res) => {
   try {
     const order = await orderModel.find({ user: req.user.id }).sort({
@@ -181,9 +181,10 @@ export const getOrder = async (req, res) => {
     })
     res.json(order)
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
+// Lấy thông tin đơn hàng theo ID
 export const getOrderById = async (req, res) => {
   try {
     const order = await orderModel.findById(req.params.id).populate("user", "name email")
@@ -192,7 +193,7 @@ export const getOrderById = async (req, res) => {
     }
     res.status(200).json(order);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
 

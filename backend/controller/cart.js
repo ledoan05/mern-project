@@ -1,15 +1,17 @@
 import { cartModel } from "../models/cart.js"
 import { productModel } from "../models/product.js"
 
-const getCart = async (userId, guestId) => {
+// Lấy giỏ hàng theo userId hoặc guestId
+export const getCart = async (userId, guestId) => {
   if (userId) {
     return await cartModel.findOne({ user: userId })
   } else if (guestId) {
     return await cartModel.findOne({ guestId: guestId })
   }
 }
+//Thêm sản phẩm vào giỏ hàng
 export const addCart = async (req, res) => {
-  console.log("📌 Dữ liệu nhận từ frontend:", req.body);
+  // console.log("Dữ liệu nhận từ frontend:", req.body);
   const { productId, quantity, size, color, guestId, userId, images } = req.body;
 
   try {
@@ -33,41 +35,36 @@ export const addCart = async (req, res) => {
     if (existingProduct) {
       existingProduct.quantity += quantity;
     } else {
-      
       cart.products.push({
         productId,
         name: product.name,
         price: product.price,
         size,
-        color,  
+        color,
         quantity,
-        images:images?.map(img => img.url) || product.images 
+        images: images?.map(img => img.url) || product.images
       });
     }
 
     cart.totalPrice = Number(cart.products.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2));
-   
-
-
     await cart.save();
-    console.log("🖼️ Dữ liệu sản phẩm trước khi lưu:", JSON.stringify(cart.products, null, 2));
+    // console.log("Dữ liệu sản phẩm trước khi lưu:", JSON.stringify(cart.products, null, 2));
     res.status(200).json(cart);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Lỗi server", error: error.message });
   }
 };
-
-
+//Sửa sản phẩm trong giỏ hàng
 export const editCart = async (req, res) => {
   try {
-    console.log("📦 Body nhận từ client:", req.body);
-    console.log("Method:", req.method);
-    console.log("Headers:", req.headers);
+    // console.log("Body nhận từ client:", req.body);
+    // console.log("Method:", req.method);
+    // console.log("Headers:", req.headers);
     const { productId, quantity, size, color, guestId, userId } = req.body
     let cart = await getCart(userId, guestId)
     if (!cart) {
-      return res.status(404).json("San pham khong ton tai")
+      return res.status(404).json("Sản phẩm không có trong giỏ hàng")
     }
     const productIndex = cart.products.findIndex(
       (item) =>
@@ -84,16 +81,17 @@ export const editCart = async (req, res) => {
       await cart.save()
       res.status(200).json(cart)
     } else {
-      res.status(404).json("Khong co san pham trong gi hang")
+      res.status(404).json("Không tìm thấy sản phẩm trong giỏ hàng")
     }
   } catch (error) {
     console.log(error);
   }
 }
+//Xoá sản phẩm trong giỏ hàng
 export const deleteCart = async (req, res) => {
   try {
     const { productId, size, color, guestId, userId } = req.body;
-    console.log("📦 Dữ liệu nhận từ client:", req.body);
+    // console.log(" Dữ liệu nhận từ client:", req.body);
 
     let cart = await getCart(userId, guestId);
     if (!cart) {
@@ -101,7 +99,7 @@ export const deleteCart = async (req, res) => {
     }
     const productIndex = cart.products.findIndex(
       (item) =>
-        item.productId.toString() === productId && 
+        item.productId.toString() === productId &&
         item.size === size &&
         item.color === color
     );
@@ -113,18 +111,17 @@ export const deleteCart = async (req, res) => {
       );
       await cart.save();
 
-      console.log("🗑️ Sản phẩm đã xoá, giỏ hàng sau khi xoá:", cart);
+      // console.log("Sản phẩm đã xoá, giỏ hàng sau khi xoá:", cart);
       return res.status(200).json(cart);
     } else {
       return res.status(404).json({ message: "Sản phẩm không tồn tại trong giỏ hàng" });
     }
   } catch (error) {
-    console.error("❌ Lỗi trong deleteCart:", error);
+    // console.error("Lỗi trong deleteCart:", error);
     res.status(500).json({ message: "Lỗi server", error: error.message });
   }
 };
-
-
+//Lấy danh sách sản phẩm trong giỏ hàng
 export const getListCart = async (req, res) => {
   const { userId, guestId } = req.query
   try {
@@ -132,13 +129,13 @@ export const getListCart = async (req, res) => {
     if (cart) {
       return res.status(200).json(cart)
     } else {
-      return res.status(404).json("Giohang khong ton tai")
+      return res.status(404).json("Giỏ hàng không tồn tại")
     }
   } catch (error) {
-    console.log(error);
-
+    // console.log(error);
   }
 }
+//Hợp nhất giỏ hàng giữa guest và user
 export const mergeCart = async (req, res) => {
   const { guestId } = req.body;
 

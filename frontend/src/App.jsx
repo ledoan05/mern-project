@@ -2,7 +2,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "../src/styles/app.css";
 import Home from "./pages/Home";
 import AdminLayout from "./components/Layout/AdminLayout";
-import UserLayout from "./components/Layout/UserLayout";
 import Login from "./pages/Login";
 import ProductsDetail from "./pages/ProductsDetail";
 import { Provider } from "react-redux";
@@ -14,6 +13,7 @@ import CheckoutPage from "./pages/CheckOutPage";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import OrderPage from "./pages/OrderPage";
 import OrderDetail from "./pages/OrderDetail ";
+import UserLayout from "./components/Layout/UserLayout";
 function App() {
   return (
     <Provider store={store}>

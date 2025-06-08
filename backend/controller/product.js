@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { productModel } from "../models/product.js";
 
+//Thêm sản phẩm
 export const addProduct = async (req, res) => {
   try {
  
@@ -59,10 +60,12 @@ export const addProduct = async (req, res) => {
 
     return res.status(201).json({ message: "Sản phẩm đã được thêm thành công!", product });
   } catch (error) {
-    console.error("Lỗi khi thêm sản phẩm:", error);
+    // console.error("Lỗi khi thêm sản phẩm:", error);
     return res.status(500).json({ message: "Lỗi máy chủ, vui lòng thử lại sau!" });
   }
 };
+
+//Cập nhật sản phẩm
 export const editProduct = async (req, res) => {
   try {
     const { id } = req.params
@@ -98,6 +101,7 @@ export const editProduct = async (req, res) => {
     return res.status(500).json({ message: "Lỗi server" });
   }
 }
+//Xoá sản phẩm
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params
@@ -107,10 +111,11 @@ export const deleteProduct = async (req, res) => {
     await productModel.findByIdAndDelete(id)
     res.status(201).json("Xoa thanh cong")
   } catch (error) {
-    console.error("Lỗi khi cập nhật sản phẩm:", error);
+    // console.error("Lỗi khi cập nhật sản phẩm:", error);
     return res.status(500).json({ message: "Lỗi server" });
   }
 }
+//Lấy danh sách sản phẩm
 export const listProduct = async (req, res) => {
   try {
     const { collection, size, color, gender, minPrice, maxPrice, sortBy, search, category, material, brand, limit } = req.query
@@ -174,9 +179,10 @@ export const listProduct = async (req, res) => {
 
     res.status(200).json(products);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
+//Lấy danh sách sản phẩm giảm giá
 export const saleProduct = async (req, res) => {
   try {
     const saleProducts = await productModel.find({ discountPrice: { $gt: 0 } }).limit(8);
@@ -185,18 +191,20 @@ export const saleProduct = async (req, res) => {
     }
     res.status(200).json(saleProducts);
   } catch (error) {
-    console.error("Lỗi khi lấy sản phẩm sale:", error);
+    // console.error("Lỗi khi lấy sản phẩm sale:", error);
     res.status(500).json({ message: "Lỗi server" });
   }
 };
+//Lấy danh sách sản phẩm mới
 export const newArrival = async (req, res) => {
   try {
     const newArrival = await productModel.find().sort({ createdAt: -1 }).limit(8)
     res.status(200).json(newArrival);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
+//Lấy danh sách sản phẩm chi tiết
 export const listProductDetail = async (req, res) => {
   try {
     const { id } = req.params
@@ -208,9 +216,10 @@ export const listProductDetail = async (req, res) => {
       return res.status(202).json(product)
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
+//Lấy danh sách sản phẩm liên quan
 export const similarProducts = async (req, res) => {
   try {
     const { id } = req.params

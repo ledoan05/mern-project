@@ -1,21 +1,24 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import ColorSelector from "../components/Products/ColorSelector";
+import ColorSelector from "../components/ColorSelector";
 import SizeSelector from "../components/Products/SizeSelector";
-import QuantitySelector from "../components/Products/QuantitySelector";
+import QuantitySelector from "../assets/QuantitySelector";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { productsDetail, similarProduct } from "@/redux/slices/productsSlice";
-import { addToCart } from "@/redux/slices/cartSlice"; 
-import ProductsSimilar from "@/components/Products/ProductsSimilar";
+import { addToCart } from "@/redux/slices/cartSlice";
+import ProductsSimilar from "@/components/ProductsSimilar";
 
 const ProductDetail = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const dispatch = useDispatch();
-  const { selectedProduct, similarProducts  = [],  loading, error } = useSelector(
-    (state) => state.product 
-  );
-  const user = useSelector((state) => state.auth.user); 
+  const {
+    selectedProduct,
+    similarProducts = [],
+    loading,
+    error,
+  } = useSelector((state) => state.product);
+  const user = useSelector((state) => state.auth.user);
 
   const [mainImage, setMainImage] = useState(null);
   const [selectedColor, setSelectedColor] = useState("");
@@ -33,33 +36,31 @@ const ProductDetail = () => {
       setMainImage(selectedProduct.images[0].url);
     }
     if (selectedProduct?.colors?.length > 0) {
-      setSelectedColor(selectedProduct.colors[0]); 
+      setSelectedColor(selectedProduct.colors[0]);
     }
     if (selectedProduct?.sizes?.length > 0) {
-      setSelectedSize(selectedProduct.sizes[0]); 
+      setSelectedSize(selectedProduct.sizes[0]);
     }
   }, [selectedProduct]);
-  
 
-const handleAddToCart = () => {
-  const userId = user?._id || null;
-  let guestId = localStorage.getItem("guest");
+  const handleAddToCart = () => {
+    const userId = user?._id || null;
+    let guestId = localStorage.getItem("guest");
 
-  dispatch(
-    addToCart({
-      productId: selectedProduct._id,
-      name: selectedProduct.title,
-      price: selectedProduct.price,
-      size: selectedSize,
-      color: selectedColor,
-      quantity,
-      userId,
-      guestId,
-      images: selectedProduct.images, 
-    })
-  );
-};
-
+    dispatch(
+      addToCart({
+        productId: selectedProduct._id,
+        name: selectedProduct.title,
+        price: selectedProduct.price,
+        size: selectedSize,
+        color: selectedColor,
+        quantity,
+        userId,
+        guestId,
+        images: selectedProduct.images,
+      })
+    );
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading product.</p>;
@@ -140,7 +141,11 @@ const handleAddToCart = () => {
           </div>
         </div>
       </div>
-      <ProductsSimilar products = {similarProducts} loading = {loading} error = {error} />
+      <ProductsSimilar
+        products={similarProducts}
+        loading={loading}
+        error={error}
+      />
     </div>
   );
 };
