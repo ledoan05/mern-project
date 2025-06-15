@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import ColorSelector from "../components/ColorSelector";
+import ColorSelector from "../components/Products/ColorSelector";
 import SizeSelector from "../components/Products/SizeSelector";
 import QuantitySelector from "../assets/QuantitySelector";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { productsDetail, similarProduct } from "@/redux/slices/productsSlice";
 import { addToCart } from "@/redux/slices/cartSlice";
-import ProductsSimilar from "@/components/Products/ProductsSimilar";
 import { toast } from "sonner"; // Thông báo đẹp
+import ProductsSimilar from "@/components/Products/ProductsSimilar";
 
 const ProductDetail = () => {
   const { id } = useParams();

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Search from "../Search";
+import Search from "../Products/Search";
 import { List, ShoppingCart, User, X } from "lucide-react";
 import CartDrawer from "../Cart/CartDrawer";
 import { HoverCard, HoverCardTrigger } from "@radix-ui/react-hover-card";

@@ -11,7 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
+
 
 const categories = ["Top Wear", "Quần", "Giày", "Phụ kiện"];
 const colors = ["Red", "Blue", "Yellow"];

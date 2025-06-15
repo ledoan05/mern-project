@@ -5,10 +5,6 @@ import axios from "axios";
 import moment from "moment";
 import CryptoJS from "crypto-js";
 import mongoose from "mongoose";
-import mongooseDebug from "mongoose";
-
-// Bật debug log cho mongoose
-mongooseDebug.set("debug", true);
 
 const config = {
   app_id: "2553",
@@ -24,47 +20,40 @@ export const createOrder = async (req, res) => {
   const user = req.user;
   console.log("📝 Tạo đơn hàng COD cho user:", user.id);
 
-  // Kiểm tra tồn kho từng sản phẩm
-  for (const item of orderItems) {
-    const product = await productModel.findById(item.productId);
-    if (!product) return res.status(404).json({ message: `Sản phẩm "${item.name}" không tồn tại.` });
-    if (product.countInStock < item.quantity) {
-      return res.status(400).json({ message: `Sản phẩm "${item.name}" chỉ còn ${product.countInStock} sản phẩm trong kho.` });
-    }
-  }
-
-  const order = new orderModel({
-    orderItems,
-    shipAddress,
-    paymentMethod: "COD",
-    totalPrice,
-    user: user.id,
-    isPaid: false,
-    paymentStatus: "pending",
-  });
-
-  // Bắt đầu transaction để đảm bảo an toàn dữ liệu khi nhiều người mua cùng lúc
-  const session = await mongoose.startSession();
-  session.startTransaction();
   try {
-    // Trừ tồn kho từng sản phẩm
+    // Kiểm tra tồn kho từng sản phẩm
     for (const item of orderItems) {
-      const product = await productModel.findById(item.productId).session(session);
+      const product = await productModel.findById(item.productId);
+      if (!product) return res.status(404).json({ message: `Sản phẩm "${item.name}" không tồn tại.` });
+      if (product.countInStock < item.quantity) {
+        return res.status(400).json({ message: `Sản phẩm "${item.name}" chỉ còn ${product.countInStock} sản phẩm trong kho.` });
+      }
+    }
+
+    // Trừ tồn kho từng sản phẩm (KHÔNG dùng transaction)
+    for (const item of orderItems) {
+      const product = await productModel.findById(item.productId);
       product.countInStock -= item.quantity;
       await product.save();
     }
-    // Lưu đơn hàng
-    const createdOrder = await order.save({ session });
-    // Xóa giỏ hàng của user
-    const cartDeleted = await cartModel.findOneAndDelete({ userId: user._id }).session(session);
+
+    const order = new orderModel({
+      orderItems,
+      shipAddress,
+      paymentMethod: "COD",
+      totalPrice,
+      user: user.id,
+      isPaid: false,
+      paymentStatus: "pending",
+    });
+    const createdOrder = await order.save();
+
+    const cartDeleted = await cartModel.findOneAndDelete({ userId: user._id });
     if (!cartDeleted) console.warn("⚠️ Không tìm thấy giỏ hàng để xoá sau khi tạo đơn COD cho:", user._id);
     else console.log("🧹 Giỏ hàng đã xoá sau khi đặt COD");
-    await session.commitTransaction();
-    session.endSession();
+
     res.status(201).json({ message: "Đơn hàng đã được tạo và giỏ hàng đã được xóa.", order: createdOrder });
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
     console.error("❌ Lỗi tạo đơn hàng COD:", error);
     res.status(500).json({ message: error.message });
   }

@@ -3,9 +3,10 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { productsByFilter } from "@/redux/slices/productsSlice";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import FilterSidebar from "@/components/FilterSidebar";
+
 import { X, Filter } from "lucide-react"; 
+import FilterSidebar from "@/components/Products/FilterSidebar";
+import { Button } from "@/components/ui/button";
 
 const CollectionPage = () => {
   const [showSidebar, setShowSidebar] = useState(false);
