@@ -6,21 +6,39 @@ import QuantitySelector from "../components/Products/QuantitySelector";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { productsDetail, similarProduct } from "@/redux/slices/productsSlice";
-import { addToCart } from "@/redux/slices/cartSlice"; 
+import { addToCart } from "@/redux/slices/cartSlice";
 import ProductsSimilar from "@/components/Products/ProductsSimilar";
+import { toast } from "sonner"; // Thông báo đẹp
 
 const ProductDetail = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const dispatch = useDispatch();
-  const { selectedProduct, similarProducts  = [],  loading, error } = useSelector(
-    (state) => state.product 
-  );
-  const user = useSelector((state) => state.auth.user); 
+  const {
+    selectedProduct,
+    similarProducts = [],
+    loading,
+    error,
+  } = useSelector((state) => state.product);
+  const user = useSelector((state) => state.auth.user);
+  // Lấy cart từ Redux
+  const cartProducts = useSelector((state) => state.cart.cart.products || []);
 
   const [mainImage, setMainImage] = useState(null);
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
+
+  // Tìm sản phẩm hiện có trong giỏ (theo biến thể màu, size)
+  const currentCartItem = cartProducts.find(
+    (item) =>
+      item.productId === selectedProduct?._id &&
+      item.size === selectedSize &&
+      item.color === selectedColor
+  );
+  const currentCartQty = currentCartItem ? currentCartItem.quantity : 0;
+  const countInStock = selectedProduct?.countInStock || 0;
+  const maxCanAdd = Math.max(countInStock - currentCartQty, 0);
+
   useEffect(() => {
     if (id) {
       dispatch(productsDetail(id));
@@ -33,40 +51,57 @@ const ProductDetail = () => {
       setMainImage(selectedProduct.images[0].url);
     }
     if (selectedProduct?.colors?.length > 0) {
-      setSelectedColor(selectedProduct.colors[0]); 
+      setSelectedColor(selectedProduct.colors[0]);
     }
     if (selectedProduct?.sizes?.length > 0) {
-      setSelectedSize(selectedProduct.sizes[0]); 
+      setSelectedSize(selectedProduct.sizes[0]);
     }
   }, [selectedProduct]);
-  
 
-const handleAddToCart = () => {
-  const userId = user?._id || null;
-  let guestId = localStorage.getItem("guest");
+  // Khi đổi biến thể màu/size, reset lại quantity nếu đã vượt số còn lại
+  useEffect(() => {
+    if (quantity > maxCanAdd && maxCanAdd > 0) setQuantity(maxCanAdd);
+    if (maxCanAdd === 0) setQuantity(1);
+  }, [selectedColor, selectedSize, maxCanAdd]);
 
-  dispatch(
-    addToCart({
-      productId: selectedProduct._id,
-      name: selectedProduct.title,
-      price: selectedProduct.price,
-      size: selectedSize,
-      color: selectedColor,
-      quantity,
-      userId,
-      guestId,
-      images: selectedProduct.images, 
-    })
-  );
-};
-
+  const handleAddToCart = () => {
+    if (countInStock === 0) {
+      toast.error("Sản phẩm đã hết hàng!");
+      return;
+    }
+    if (maxCanAdd <= 0) {
+      toast.error("Bạn đã thêm tối đa số lượng sản phẩm này vào giỏ!");
+      return;
+    }
+    if (quantity > maxCanAdd) {
+      toast.error(
+        `Bạn chỉ có thể thêm tối đa ${maxCanAdd} sản phẩm nữa vào giỏ!`
+      );
+      setQuantity(maxCanAdd);
+      return;
+    }
+    dispatch(
+      addToCart({
+        productId: selectedProduct._id,
+        name: selectedProduct.title,
+        price: selectedProduct.price,
+        size: selectedSize,
+        color: selectedColor,
+        quantity,
+        userId: user?._id || null,
+        guestId: localStorage.getItem("guest"),
+        images: selectedProduct.images,
+      })
+    );
+    toast.success("Đã thêm sản phẩm vào giỏ hàng!");
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading product.</p>;
   if (!selectedProduct) return <p>Product not found.</p>;
 
   return (
-    <div className="container mx-auto mt-24  px-4 md:px-8 lg:px-16 py-12">
+    <div className="container mx-auto mt-24 px-4 md:px-8 lg:px-16 py-12">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
         <div className="flex flex-col gap-4">
           <div className="w-full">
@@ -92,7 +127,6 @@ const handleAddToCart = () => {
             ))}
           </div>
         </div>
-
         {/* Thông tin sản phẩm */}
         <div>
           <h1 className="text-3xl font-bold">{selectedProduct.title}</h1>
@@ -105,7 +139,6 @@ const handleAddToCart = () => {
           <p className="text-gray-600 mt-4">{selectedProduct.description}</p>
 
           {/* Chọn màu */}
-          {}
           <div className="mt-4">
             <p className="font-semibold">Màu sắc:</p>
             <ColorSelector
@@ -129,18 +162,38 @@ const handleAddToCart = () => {
           <div className="mt-5">
             <p className="font-semibold">Số lượng:</p>
             <div className="flex flex-col md:flex-row items-center gap-4 mt-3">
-              <QuantitySelector quantity={quantity} setQuantity={setQuantity} />
+              <QuantitySelector
+                quantity={quantity}
+                setQuantity={setQuantity}
+                max={maxCanAdd > 0 ? maxCanAdd : 1}
+                disabled={maxCanAdd <= 0}
+              />
               <Button
                 onClick={handleAddToCart}
                 className="w-full md:w-auto px-6 text-white"
+                disabled={countInStock === 0 || maxCanAdd <= 0}
               >
-                Thêm vào giỏ hàng
+                {countInStock === 0
+                  ? "Hết hàng"
+                  : maxCanAdd <= 0
+                  ? "Đã đạt tối đa"
+                  : "Thêm vào giỏ hàng"}
               </Button>
+            </div>
+            <div className="mt-2 text-sm text-gray-500">
+              Tồn kho:{" "}
+              <span className={countInStock === 0 ? "text-red-500" : ""}>
+                {countInStock > 0 ? countInStock : "Hết hàng"}
+              </span>
             </div>
           </div>
         </div>
       </div>
-      <ProductsSimilar products = {similarProducts} loading = {loading} error = {error} />
+      <ProductsSimilar
+        products={similarProducts}
+        loading={loading}
+        error={error}
+      />
     </div>
   );
 };

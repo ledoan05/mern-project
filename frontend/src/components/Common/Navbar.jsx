@@ -148,6 +148,19 @@ const Navbar = () => {
               </span>
             )}
           </button>
+          <div className="relative w-fit">
+            <button className="p-2 bg-gray-200 rounded-full">
+              {" "}
+              <ShoppingCart />
+            </button>
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5">
+              {cartItemCount > 0 && (
+                <span className="absolute bg-red-700 text-white text-xs rounded-full px-2 py-0.5">
+                  {cartItemCount}
+                </span>
+              )}
+            </span>
+          </div>
           <Search />
           <button onClick={toogleNavDrawer} className="md:hidden">
             <List />

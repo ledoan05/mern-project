@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import {  useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -12,7 +12,6 @@ import axios from "../untils/axiosInstance.js";
 import { useNavigate } from "react-router-dom";
 import { clearCart } from "@/redux/slices/cartSlice";
 
-
 const formSchema = z.object({
   name: z.string().min(2, "Họ và tên tối thiểu 2 ký tự"),
   phone: z
@@ -24,12 +23,11 @@ const formSchema = z.object({
 
 const CheckoutPage = () => {
   const cart = useSelector((state) => state.cart);
-  const navigate = useNavigate();
   const cartItems = cart?.cart?.products || [];
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState("COD");
-
 
   const {
     register,
@@ -50,30 +48,28 @@ const CheckoutPage = () => {
     const orderData = {
       orderItems: cartItems,
       shipAddress: data,
-      paymentMethod: paymentMethod,
+      paymentMethod,
       amount: totalPrice,
       totalPrice,
     };
 
     const token = localStorage.getItem("token");
+
     try {
       if (paymentMethod === "COD") {
-        const res = await axios.post("/api/order/create", orderData,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await axios.post("/api/order/create", orderData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         if (res.status === 201) {
           dispatch(clearCart());
           navigate("/payment-success");
         }
-      } else if (paymentMethod === "ZALOPAY") {
-        const zaloRes = await axios.post("/api/order/create-order",orderData,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+      } else if (paymentMethod === "ZaloPay") {
+        const zaloRes = await axios.post("/api/order/create-order", orderData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
         if (zaloRes.data?.order_url) {
           window.location.href = zaloRes.data.order_url;
         } else {
@@ -82,14 +78,11 @@ const CheckoutPage = () => {
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      
     }
   };
 
   return (
     <div className="mt-24 mx-auto p-6 flex flex-col md:flex-row gap-8 max-w-7xl">
-   
-      {/* Form thanh toán */}
       <form
         onSubmit={handleSubmit(handleCheckout)}
         className="md:w-2/4 space-y-6"
@@ -133,10 +126,11 @@ const CheckoutPage = () => {
         </Card>
 
         <Button type="submit" className="w-full">
-          Xác nhận thanh toán 
+          Xác nhận thanh toán
         </Button>
       </form>
-      {/* Giỏ hàng */}
+
+      {/* Giỏ hàng và chọn phương thức */}
       <div className="md:w-2/4 space-y-6">
         <h2 className="text-2xl font-bold">Giỏ hàng của bạn</h2>
         <Card>
@@ -171,7 +165,6 @@ const CheckoutPage = () => {
           </CardContent>
         </Card>
 
-        {/* Phương thức thanh toán */}
         <h2 className="text-2xl font-bold">Phương thức thanh toán</h2>
         <div className="flex gap-4">
           <Button
@@ -181,8 +174,8 @@ const CheckoutPage = () => {
             COD
           </Button>
           <Button
-            variant={paymentMethod === "ZALOPAY" ? "default" : "outline"}
-            onClick={() => setPaymentMethod("ZALOPAY")}
+            variant={paymentMethod === "ZaloPay" ? "default" : "outline"}
+            onClick={() => setPaymentMethod("ZaloPay")}
           >
             ZaloPay
           </Button>

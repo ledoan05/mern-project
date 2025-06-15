@@ -1,4 +1,5 @@
 import { userModel } from "../models/user.js";
+import jwt from "jsonwebtoken";
 
 
 export const getUser = async (req, res) => {
@@ -51,8 +52,8 @@ export const editUser = async (req, res) => {
 
       // Tạo lại token mới
       const payLoad = { id: updatedUser._id, name: updatedUser.name, role: updatedUser.role };
-      const token = Jwt.sign(payLoad, process.env.JWT_SECRET, { expiresIn: '1h' });
-      const refreshToken = Jwt.sign(payLoad, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+      const token = jwt.sign(payLoad, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const refreshToken = jwt.sign(payLoad, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
 
       // Xóa mật khẩu khỏi kết quả trả về
       updatedUser.password = undefined;

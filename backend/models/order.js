@@ -7,11 +7,11 @@ const orderItemSchema = mongoose.Schema({
     required: true
   },
   name: { type: String, required: true },
-  images: [{ type: String }], // Mảng các chuỗi hình ảnh
+  images: [{ type: String }],
   price: { type: Number, required: true },
   size: String,
   color: String,
-  quantity: { type: Number, required: true } 
+  quantity: { type: Number, required: true }
 }, { _id: false });
 
 const orderSchema = mongoose.Schema({
@@ -24,7 +24,6 @@ const orderSchema = mongoose.Schema({
   shipAddress: {
     address: { type: String, required: true },
     city: { type: String, required: true },
-    
   },
   paymentMethod: { type: String, required: true },
   totalPrice: { type: Number, required: true },
@@ -34,15 +33,16 @@ const orderSchema = mongoose.Schema({
   deliveredAt: { type: Date },
   paymentStatus: {
     type: String,
-    enum: ["pending", "success", "failed"], 
+    enum: ["pending", "success", "failed"],
     default: "pending"
   },
-  paymentDetails: { type: mongoose.Schema.Types.Mixed }, 
+  paymentDetails: { type: mongoose.Schema.Types.Mixed },
   status: {
     type: String,
     enum: ["Cho xac nhan", "Cho lay hang", "Cho giao hang", "Da giao hang", "Huy"],
     default: "Cho xac nhan"
-  }
+  },
+  app_trans_id: { type: String, unique: true, sparse: true } // ✅ ZaloPay tracking
 }, { timestamps: true });
 
 export const orderModel = mongoose.model("order", orderSchema);

@@ -12,8 +12,13 @@ function App() {
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
+          {/* Các route public/client */}
           {UserRouter()}
+
+          {/* Các route admin */}
           {AdminRouter()}
+
+          {/* Route unauthorized */}
           <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
       </BrowserRouter>

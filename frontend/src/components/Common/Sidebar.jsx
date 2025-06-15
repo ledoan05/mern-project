@@ -9,6 +9,9 @@ import {
 import { NavLink } from "react-router-dom";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useDispatch } from "react-redux";
+import { logout } from "@/redux/slices/authSlice";
+import { toast } from "sonner";
 
 const links = [
   {
@@ -16,29 +19,40 @@ const links = [
     to: "/admin/dashboard",
     icon: <Home className="w-4 h-4" />,
   },
-  { name: "Users", to: "/admin/users", icon: <Users className="w-4 h-4" /> },
   {
-    name: "Products",
-    to: "/admin/products",
-    icon: <Package className="w-4 h-4" />,
+    name: "Users",
+    to: "/admin/dashboard/users",
+    icon: <Users className="w-4 h-4" />,
   },
   {
-    name: "Settings",
-    to: "/admin/settings",
-    icon: <Settings className="w-4 h-4" />,
+    name: "Order",
+    to: "/admin/dashboard/order",
+    icon: <Users className="w-4 h-4" />,
+  },
+  {
+    name: "Products",
+    to: "/admin/dashboard/product",
+    icon: <Package className="w-4 h-4" />,
   },
 ];
 
 const AdminSidebar = () => {
+  const dispatch = useDispatch()
+
   const user = {
     name: "Alicia Koch",
     email: "alicia@email.com",
-    avatar: "https://i.pravatar.cc/150?img=12",
+    
   };
 
   const handleLogout = () => {
-    console.log("Logout clicked");
-    // TODO: add logout logic here
+    // Xóa toàn bộ thông tin đăng nhập
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    dispatch(logout());
+    toast.success("Đăng xuất thành công!");
+    // Reload tới trang client/public, giải phóng toàn bộ context/layout cũ
+    window.location.href = "/"
   };
 
   return (

@@ -4,7 +4,7 @@ import '../src/styles/index.css'
 import App from './App.jsx'
 import { setupInterceptors } from "./untils/setupInterceptors.js";
 
-setupInterceptors(); // 👉 Gắn interceptor đúng lúc
+setupInterceptors(); 
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
