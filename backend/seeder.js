@@ -19,8 +19,8 @@ const seedData = async () => {
     const createdUser = await userModel.create({
       name: "admin",
       email: "admin@123.com",
-      password: bcrypt.hashSync("123456", 10),
-      role: "admin",
+      password: bcrypt.hashSync("123456", 10),  
+      role: "admin"
     })
 
     const sampleProducts = products.map((product) => ({

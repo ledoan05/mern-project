@@ -14,7 +14,7 @@ const CartDrawer = ({ drawerOpen, toogleCartDrawer }) => {
   const userId = user ? user._id : null;
   useEffect(() => {
     if (drawerOpen) {
-      toogleCartDrawer(false); 
+      toogleCartDrawer(false);
     }
   }, [location.pathname]);
 

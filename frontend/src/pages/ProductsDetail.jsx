@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import ColorSelector from "../components/Products/ColorSelector";
+import ColorSelector from "../components/ColorSelector";
 import SizeSelector from "../components/Products/SizeSelector";
-import QuantitySelector from "../components/Products/QuantitySelector";
+import QuantitySelector from "../assets/QuantitySelector";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { productsDetail, similarProduct } from "@/redux/slices/productsSlice";
@@ -80,6 +80,7 @@ const ProductDetail = () => {
       setQuantity(maxCanAdd);
       return;
     }
+
     dispatch(
       addToCart({
         productId: selectedProduct._id,

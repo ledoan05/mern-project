@@ -1,8 +1,8 @@
 import React from 'react'
-import Banner from '../components/Common/Banner'
-import CollectionSection from '@/components/Products/CollectionSection'
-import NewArrival from '@/components/Products/NewArrival'
-import BestSeller from '@/components/Products/BestSeller'
+import Banner from '../components/Banner'
+import CollectionSection from '../components/CollectionSection'
+import NewArrival from '@/components/NewArrival'
+import BestSeller from '@/components/BestSeller'
 
 const Home = () => {
   return (

@@ -15,7 +15,7 @@ export const setupInterceptors = () => {
     if (original.url.includes("/api/user/refresh-token")) {
       return Promise.reject(err);
     }
-
+    
     const status = err.response.status;
     const msg = err.response.data?.message;
     const isAccessExpired = (status === 401 || status === 403)

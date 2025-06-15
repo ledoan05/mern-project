@@ -122,11 +122,17 @@ export const paymentZaloRouter = async (req, res) => {
 // ========================== CALLBACK THANH TOÁN ZALOPAY ==========================
 export const callbackRouter = async (req, res) => {
   console.log("📥 Full callback body:", req.body);
+
   let result = {};
   try {
     const { data, mac: reqMac } = req.body;
     const mac = CryptoJS.HmacSHA256(data, config.key2).toString();
-    if (reqMac !== mac) return res.json({ return_code: -1, return_message: "MAC không hợp lệ" });
+
+    if (reqMac !== mac) {
+      result.return_code = -1;
+      result.return_message = "MAC không hợp lệ";
+      return res.json(result);
+    }
 
     const dataJson = JSON.parse(data);
     const embedData = JSON.parse(dataJson.embed_data || "{}");
@@ -140,14 +146,17 @@ export const callbackRouter = async (req, res) => {
     }));
     const appTransId = dataJson.app_trans_id;
     let returnCode = dataJson.return_code;
+
     if (returnCode === undefined) {
-      const queryMac = CryptoJS.HmacSHA256(`${config.app_id}|${appTransId}|${config.key1}`, config.key1).toString();
+      // Gọi API kiểm tra trạng thái đơn hàng
+      const queryMac = CryptoJS.HmacSHA256(`${config.app_id}|${dataJson.app_trans_id}|${config.key1}`, config.key1).toString();
       const queryRes = await axios.post("https://sb-openapi.zalopay.vn/v2/query", null, {
         params: { app_id: config.app_id, app_trans_id: appTransId, mac: queryMac },
       });
       returnCode = queryRes.data.return_code;
       console.log("🔁 Gửi query check trạng thái đơn hàng, return_code:", returnCode);
     }
+
     const isPaid = parseInt(returnCode) === 1;
     const paymentStatus = isPaid ? "success" : "failed";
     const existingOrder = await orderModel.findOne({ app_trans_id: appTransId });
@@ -175,6 +184,7 @@ export const callbackRouter = async (req, res) => {
       }
       const saved = await order.save();
       console.log("✅ Đơn hàng ZaloPay đã lưu thành công:", saved);
+
       // --- TRỪ TỒN KHO SAU KHI THANH TOÁN ---
       if (isPaid) {
         for (const item of fixedOrderItems) {
@@ -185,7 +195,6 @@ export const callbackRouter = async (req, res) => {
           }
           if (product.countInStock < item.quantity) {
             console.warn(`Sản phẩm "${product.name}" không đủ tồn kho khi thanh toán ZaloPay!`);
-            // Bạn có thể rollback đơn/lưu log ở đây nếu muốn chặt chẽ
             continue;
           }
           product.countInStock -= item.quantity;
@@ -220,6 +229,7 @@ export const callbackRouter = async (req, res) => {
 };
 
 // ========================== LẤY ĐƠN HÀNG THEO USER ==========================
+// Lấy danh sách đơn hàng của người dùng
 export const getOrder = async (req, res) => {
   try {
     const order = await orderModel.find({ user: req.user.id }).sort({ createdAt: -1 });
@@ -231,6 +241,7 @@ export const getOrder = async (req, res) => {
 };
 
 // ========================== LẤY CHI TIẾT ĐƠN HÀNG ==========================
+// Lấy thông tin đơn hàng theo ID
 export const getOrderById = async (req, res) => {
   try {
     const order = await orderModel.findById(req.params.id).populate("user", "name email");

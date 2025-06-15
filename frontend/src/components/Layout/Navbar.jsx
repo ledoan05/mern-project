@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Search from "./Search";
+import Search from "../Search";
 import { List, ShoppingCart, User, X } from "lucide-react";
-import CartDrawer from "./CartDrawer";
+import CartDrawer from "../Cart/CartDrawer";
 import { HoverCard, HoverCardTrigger } from "@radix-ui/react-hover-card";
 import { Button } from "../ui/button";
 import {
@@ -24,7 +24,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state.auth); 
+  const { user } = useSelector((state) => state.auth);
   const { cart } = useSelector((state) => state.cart);
   const cartItemCount =
     cart?.products?.reduce((total, product) => total + product.quantity, 0) ||
@@ -40,8 +40,8 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     await dispatch(logout());
-    dispatch(clearCart()); 
-    navigate("/"); 
+    dispatch(clearCart());
+    navigate("/");
   };
 
   return (
