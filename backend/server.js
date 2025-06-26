@@ -10,6 +10,7 @@ import orderRoute from './router/order.js'
 import userAdminRoute from './router/userAdmin.js'
 import productAdminRoute from './router/productAdmin.js'
 import orderAdminRoute from './router/orderAdmin.js'
+import chatRoute from './router/chatbot.js'
 
 const app = express()
 app.use(express.json());
@@ -26,6 +27,7 @@ app.use("/api/product", ProductRoute)
 app.use("/api/cart", CartRoute)
 app.use("/api/order", orderRoute)
 app.use("/api/upload", uploadRoute)
+app.use("/api/chat", chatRoute)
 
 //admin
 app.use("/api/admin/user", userAdminRoute)

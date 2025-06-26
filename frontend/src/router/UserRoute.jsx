@@ -9,6 +9,7 @@ import CheckoutPage from "../pages/CheckOutPage";
 import PaymentSuccess from "../pages/PaymentSuccess";
 import OrderPage from "../pages/OrderPage";
 import OrderDetail from "../pages/OrderDetail ";
+import Chatbot from "@/pages/ChatBot";
 
 const UserRouter = () => {
   return (
@@ -22,6 +23,7 @@ const UserRouter = () => {
       <Route path="payment-success" element={<PaymentSuccess />} />
       <Route path="order" element={<OrderPage />} />
       <Route path="order/:orderId" element={<OrderDetail />} />
+      <Route path="chat" element={<Chatbot />} />
     </Route>
   );
 };

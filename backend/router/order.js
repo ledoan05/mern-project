@@ -1,7 +1,6 @@
 import express from 'express'
 import { authMiddle } from '../middleware/authMiddleware.js';
 import { paymentZaloRouter, callbackRouter, createOrder, getOrder, getOrderById } from '../controller/order.js';
-import { updateOrder } from '../controller/orderAdmin.js';
 
 const route = express.Router();
 
