@@ -109,10 +109,16 @@ const Navbar = () => {
                       <DropdownMenuShortcut>📦</DropdownMenuShortcut>
                     </DropdownMenuItem>
                   </Link>
+                  <Link to="/shipping-address">
+                    <DropdownMenuItem>
+                      Địa chỉ giao hàng
+                      <DropdownMenuShortcut>📍</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                  </Link>
                   <Link to="/chat">
                     <DropdownMenuItem>
                       CSKH
-                      <DropdownMenuShortcut>📦</DropdownMenuShortcut>
+                      <DropdownMenuShortcut>💬</DropdownMenuShortcut>
                     </DropdownMenuItem>
                   </Link>
 
@@ -154,7 +160,7 @@ const Navbar = () => {
               </span>
             )}
           </button>
-          
+
           <Search />
           <button onClick={toogleNavDrawer} className="md:hidden">
             <List />

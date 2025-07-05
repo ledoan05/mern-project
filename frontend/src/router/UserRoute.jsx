@@ -10,6 +10,7 @@ import PaymentSuccess from "../pages/PaymentSuccess";
 import OrderPage from "../pages/OrderPage";
 import OrderDetail from "../pages/OrderDetail ";
 import Chatbot from "@/pages/ChatBot";
+import ShippingAddressPage from "@/pages/ShippingAddressPage";
 
 const UserRouter = () => {
   return (
@@ -24,6 +25,7 @@ const UserRouter = () => {
       <Route path="order" element={<OrderPage />} />
       <Route path="order/:orderId" element={<OrderDetail />} />
       <Route path="chat" element={<Chatbot />} />
+      <Route path="shipping-address" element={<ShippingAddressPage />} />
     </Route>
   );
 };

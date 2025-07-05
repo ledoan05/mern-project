@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -8,9 +8,14 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import axios from "../untils/axiosInstance.js";
 import { useNavigate } from "react-router-dom";
 import { clearCart } from "@/redux/slices/cartSlice";
+import {
+  fetchShippingAddress,
+  saveShippingAddress,
+} from "@/redux/slices/shippingAddressSlice";
 
 const formSchema = z.object({
   name: z.string().min(2, "Họ và tên tối thiểu 2 ký tự"),
@@ -25,17 +30,38 @@ const CheckoutPage = () => {
   const cart = useSelector((state) => state.cart);
   const cartItems = cart?.cart?.products || [];
   const user = useSelector((state) => state.auth.user);
+  const shippingAddress = useSelector((state) => state.shippingAddress);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState("COD");
+  const [useSavedAddress, setUseSavedAddress] = useState(false);
+  const [saveNewAddress, setSaveNewAddress] = useState(true);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({
     resolver: zodResolver(formSchema),
   });
+
+  // Lấy địa chỉ đã lưu khi component mount
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchShippingAddress());
+    }
+  }, [dispatch, user]);
+
+  // Tự động điền form nếu có địa chỉ đã lưu và user chọn sử dụng
+  useEffect(() => {
+    if (useSavedAddress && shippingAddress.address) {
+      setValue("name", shippingAddress.address.name);
+      setValue("phone", shippingAddress.address.phone);
+      setValue("address", shippingAddress.address.address);
+      setValue("city", shippingAddress.address.city);
+    }
+  }, [useSavedAddress, shippingAddress.address, setValue]);
 
   const totalPrice = cartItems.reduce(
     (acc, item) => acc + item.quantity * item.price,
@@ -44,6 +70,15 @@ const CheckoutPage = () => {
 
   const handleCheckout = async (data) => {
     if (!cartItems.length) return;
+
+    // Lưu địa chỉ mới nếu user chọn
+    if (saveNewAddress && !useSavedAddress) {
+      try {
+        await dispatch(saveShippingAddress(data)).unwrap();
+      } catch (error) {
+        console.error("Không thể lưu địa chỉ:", error);
+      }
+    }
 
     const orderData = {
       orderItems: cartItems,
@@ -88,42 +123,100 @@ const CheckoutPage = () => {
         className="md:w-2/4 space-y-6"
       >
         <h2 className="text-2xl font-bold">Thông tin thanh toán</h2>
-        <Card>
-          <CardContent className="p-6 space-y-4">
-            <div className="space-y-2">
-              <Label>Email</Label>
-              <Input value={user?.email || ""} disabled />
-            </div>
-            <div className="space-y-2">
-              <Label>Họ và tên</Label>
-              <Input {...register("name")} placeholder="Nhập họ và tên" />
-              {errors.name && (
-                <p className="text-sm text-red-500">{errors.name.message}</p>
+
+        {/* Hiển thị địa chỉ đã lưu nếu có */}
+        {shippingAddress.address && (
+          <Card className="border-green-200 bg-green-50">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2 mb-3">
+                <Checkbox
+                  id="useSavedAddress"
+                  checked={useSavedAddress}
+                  onCheckedChange={setUseSavedAddress}
+                />
+                <Label htmlFor="useSavedAddress" className="font-medium">
+                  Sử dụng địa chỉ đã lưu
+                </Label>
+              </div>
+              {useSavedAddress && (
+                <div className="ml-6 space-y-1 text-sm">
+                  <p>
+                    <strong>Họ tên:</strong> {shippingAddress.address.name}
+                  </p>
+                  <p>
+                    <strong>Số điện thoại:</strong>{" "}
+                    {shippingAddress.address.phone}
+                  </p>
+                  <p>
+                    <strong>Địa chỉ:</strong> {shippingAddress.address.address}
+                  </p>
+                  <p>
+                    <strong>Thành phố:</strong> {shippingAddress.address.city}
+                  </p>
+                </div>
               )}
-            </div>
-            <div className="space-y-2">
-              <Label>Số điện thoại</Label>
-              <Input {...register("phone")} placeholder="Nhập số điện thoại" />
-              {errors.phone && (
-                <p className="text-sm text-red-500">{errors.phone.message}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Form nhập địa chỉ mới */}
+        {(!useSavedAddress || !shippingAddress.address) && (
+          <Card>
+            <CardContent className="p-6 space-y-4">
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <Input value={user?.email || ""} disabled />
+              </div>
+              <div className="space-y-2">
+                <Label>Họ và tên</Label>
+                <Input {...register("name")} placeholder="Nhập họ và tên" />
+                {errors.name && (
+                  <p className="text-sm text-red-500">{errors.name.message}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>Số điện thoại</Label>
+                <Input
+                  {...register("phone")}
+                  placeholder="Nhập số điện thoại"
+                />
+                {errors.phone && (
+                  <p className="text-sm text-red-500">{errors.phone.message}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>Địa chỉ</Label>
+                <Input {...register("address")} placeholder="Nhập địa chỉ" />
+                {errors.address && (
+                  <p className="text-sm text-red-500">
+                    {errors.address.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>Thành phố</Label>
+                <Input {...register("city")} placeholder="Nhập thành phố" />
+                {errors.city && (
+                  <p className="text-sm text-red-500">{errors.city.message}</p>
+                )}
+              </div>
+
+              {/* Checkbox lưu địa chỉ mới */}
+              {!useSavedAddress && (
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="saveNewAddress"
+                    checked={saveNewAddress}
+                    onCheckedChange={setSaveNewAddress}
+                  />
+                  <Label htmlFor="saveNewAddress">
+                    Lưu địa chỉ này cho lần mua sau
+                  </Label>
+                </div>
               )}
-            </div>
-            <div className="space-y-2">
-              <Label>Địa chỉ</Label>
-              <Input {...register("address")} placeholder="Nhập địa chỉ" />
-              {errors.address && (
-                <p className="text-sm text-red-500">{errors.address.message}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label>Thành phố</Label>
-              <Input {...register("city")} placeholder="Nhập thành phố" />
-              {errors.city && (
-                <p className="text-sm text-red-500">{errors.city.message}</p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         <Button type="submit" className="w-full">
           Xác nhận thanh toán

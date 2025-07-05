@@ -45,7 +45,7 @@ export const Login = async (req, res) => {
     if (!checkPass) return res.status(400).json({ message: "Mật khẩu không đúng" });
 
     const payLoad = { id: user._id, name: user.name, role: user.role };
-    const token = Jwt.sign(payLoad, process.env.JWT_SECRET, { expiresIn: "1h" }); 
+    const token = Jwt.sign(payLoad, process.env.JWT_SECRET, { expiresIn: "1h" });
     const refreshToken = Jwt.sign(payLoad, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
 
     user.password = undefined;
@@ -85,5 +85,77 @@ export const refreshToken = async (req, res) => {
       return res.status(403).json({ message: 'Refresh token không hợp lệ' });
     }
     return res.status(500).json({ message: 'Lỗi server khi xác minh refresh token' });
+  }
+};
+
+//Lưu địa chỉ giao hàng
+export const saveShippingAddress = async (req, res) => {
+  try {
+    const { name, phone, address, city } = req.body;
+    const userId = req.user.id;
+
+    if (!name || !phone || !address || !city) {
+      return res.status(400).json({ message: "Vui lòng nhập đầy đủ thông tin địa chỉ!" });
+    }
+
+    const user = await userModel.findByIdAndUpdate(
+      userId,
+      { shippingAddress: { name, phone, address, city } },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "Không tìm thấy người dùng!" });
+    }
+
+    return res.status(200).json({
+      message: "Lưu địa chỉ giao hàng thành công!",
+      shippingAddress: user.shippingAddress
+    });
+  } catch (error) {
+    console.error("Lỗi lưu địa chỉ:", error);
+    return res.status(500).json({ message: "Đã xảy ra lỗi, vui lòng thử lại sau!" });
+  }
+};
+
+//Lấy địa chỉ giao hàng
+export const getShippingAddress = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "Không tìm thấy người dùng!" });
+    }
+
+    return res.status(200).json({
+      shippingAddress: user.shippingAddress || null
+    });
+  } catch (error) {
+    console.error("Lỗi lấy địa chỉ:", error);
+    return res.status(500).json({ message: "Đã xảy ra lỗi, vui lòng thử lại sau!" });
+  }
+};
+
+//Xóa địa chỉ giao hàng
+export const deleteShippingAddress = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await userModel.findByIdAndUpdate(
+      userId,
+      { $unset: { shippingAddress: 1 } },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "Không tìm thấy người dùng!" });
+    }
+
+    return res.status(200).json({
+      message: "Xóa địa chỉ giao hàng thành công!"
+    });
+  } catch (error) {
+    console.error("Lỗi xóa địa chỉ:", error);
+    return res.status(500).json({ message: "Đã xảy ra lỗi, vui lòng thử lại sau!" });
   }
 };

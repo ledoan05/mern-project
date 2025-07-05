@@ -1,6 +1,7 @@
 import { orderModel } from "../models/order.js";
 import { cartModel } from "../models/cart.js";
 import { productModel } from "../models/product.js";
+import { userModel } from "../models/user.js";
 import axios from "axios";
 import moment from "moment";
 import CryptoJS from "crypto-js";
@@ -47,6 +48,24 @@ export const createOrder = async (req, res) => {
       paymentStatus: "pending",
     });
     const createdOrder = await order.save();
+
+    // Tự động lưu địa chỉ giao hàng cho user
+    try {
+      await userModel.findByIdAndUpdate(
+        user.id,
+        { 
+          shippingAddress: {
+            name: shipAddress.name,
+            phone: shipAddress.phone,
+            address: shipAddress.address,
+            city: shipAddress.city
+          }
+        }
+      );
+      console.log("✅ Đã lưu địa chỉ giao hàng cho user:", user.id);
+    } catch (error) {
+      console.warn("⚠️ Không thể lưu địa chỉ giao hàng:", error.message);
+    }
 
     const cartDeleted = await cartModel.findOneAndDelete({ userId: user._id });
     if (!cartDeleted) console.warn("⚠️ Không tìm thấy giỏ hàng để xoá sau khi tạo đơn COD cho:", user._id);
