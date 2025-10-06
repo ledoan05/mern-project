@@ -36,3 +36,7 @@ app.use("/api/admin/order", orderAdminRoute)
 app.listen(port, () => {
   console.log(`End point : http://localhost:${port}`);
 })
+
+app.get('/', (req, res) => {
+  res.send('✅ Backend is running successfully on Vercel!');
+});
