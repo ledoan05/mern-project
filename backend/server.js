@@ -12,15 +12,13 @@ import productAdminRoute from './router/productAdmin.js'
 import orderAdminRoute from './router/orderAdmin.js'
 import chatRoute from './router/chatbot.js'
 
-const app = express()
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors())
 dotenv.config()
-    
-const port = process.env.PORT || 9000
-
 connectDB()
+
+const app = express()
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(cors())
 
 app.use("/api/user", UserRouter)
 app.use("/api/product", ProductRoute)
@@ -29,14 +27,15 @@ app.use("/api/order", orderRoute)
 app.use("/api/upload", uploadRoute)
 app.use("/api/chat", chatRoute)
 
-//admin
+// admin
 app.use("/api/admin/user", userAdminRoute)
 app.use("/api/admin/product", productAdminRoute)
 app.use("/api/admin/order", orderAdminRoute)
-app.listen(port, () => {
-  console.log(`End point : http://localhost:${port}`);
-})
 
 app.get('/', (req, res) => {
-  res.send('✅ Backend is running successfully on Vercel!');
-});
+  res.send('✅ Backend is running successfully on Vercel!')
+})
+
+// ❌ KHÔNG DÙNG app.listen()
+// ✅ Thay vào đó export cho Vercel
+export default app
