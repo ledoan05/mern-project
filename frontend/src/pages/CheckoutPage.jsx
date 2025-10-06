@@ -16,6 +16,7 @@ import {
   fetchShippingAddress,
   saveShippingAddress,
 } from "@/redux/slices/shippingAddressSlice";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z.string().min(2, "Họ và tên tối thiểu 2 ký tự"),
@@ -112,6 +113,11 @@ const CheckoutPage = () => {
         }
       }
     } catch (error) {
+      const message = error.response?.data?.message || "Đặt hàng thất bại";
+      toast.error(message, {
+        position: "top-center",
+        autoClose: 5000,
+      });
       console.error("Checkout error:", error);
     }
   };
