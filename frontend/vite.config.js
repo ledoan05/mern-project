@@ -13,7 +13,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
+  base: "./", // 👈 THÊM DÒNG NÀY
   build: {
-    outDir: "dist"
-  }
+    outDir: "dist",
+  },
 });
