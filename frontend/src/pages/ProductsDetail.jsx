@@ -10,7 +10,7 @@ import { addToCart } from "@/redux/slices/cartSlice";
 import { toast } from "sonner"; // Thông báo đẹp
 import ProductsSimilar from "@/components/Products/ProductsSimilar";
 
-const ProductDetail = () => {
+const ProductsDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const {
@@ -199,4 +199,4 @@ const ProductDetail = () => {
   );
 };
 
-export default ProductDetail;
+export default ProductsDetail;

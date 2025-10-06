@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import { Toaster } from "sonner";

@@ -1,22 +1,24 @@
-import { Route } from "react-router-dom";
-import UserLayout from "../components/Layout/UserLayout";
-import Home from "../pages/Home";
-import ColletionPage from "../pages/ColletionPage";
-import ProductsDetail from "../pages/ProductsDetail";
-import Login from "../pages/Login";
-import Register from "../pages/Register";
-import CheckoutPage from "../pages/CheckOutPage";
-import PaymentSuccess from "../pages/PaymentSuccess";
-import OrderPage from "../pages/OrderPage";
-import OrderDetail from "../pages/OrderDetail ";
+import UserLayout from "@/components/Layout/UserLayout";
 import Chatbot from "@/pages/ChatBot";
+import CheckoutPage from "@/pages/CheckoutPage";
+import CollectionPage from "@/pages/ColletionPage";
+import Home from "@/pages/Home";
+import Login from "@/pages/Login";
+import OrderDetail from "@/pages/OrderDetail ";
+import OrderPage from "@/pages/OrderPage";
+import PaymentSuccess from "@/pages/PaymentSuccess";
+import ProductsDetail from "@/pages/ProductsDetail";
+import Register from "@/pages/Register";
 import ShippingAddressPage from "@/pages/ShippingAddressPage";
+import { Route } from "react-router-dom";
+
+
 
 const UserRouter = () => {
   return (
     <Route path="/" element={<UserLayout />}>
       <Route index element={<Home />} />
-      <Route path="collection" element={<ColletionPage />} />
+      <Route path="collection" element={<CollectionPage />} />
       <Route path="product/:id" element={<ProductsDetail />} />
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />
